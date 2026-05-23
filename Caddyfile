@@ -1,0 +1,33 @@
+{DOMAIN} {
+    # ── Directus admin & API at /cms ──────────────────────────────────────────
+    handle /cms/* {
+        uri strip_prefix /cms
+        reverse_proxy directus:8055
+    }
+
+    # ── Directus assets (images served directly) ──────────────────────────────
+    handle /assets/* {
+        reverse_proxy directus:8055
+    }
+
+    # ── Next.js frontend (everything else) ───────────────────────────────────
+    handle {
+        reverse_proxy frontend:3000
+    }
+
+    # ── Security headers ──────────────────────────────────────────────────────
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    # ── Logging ───────────────────────────────────────────────────────────────
+    log {
+        output stderr
+        format console
+        level INFO
+    }
+}

@@ -1,0 +1,57 @@
+version: "3.8"
+
+# ── Local development: Directus + Postgres only ───────────────────────────────
+# Run Next.js separately with: cd frontend && npm run dev
+#
+# Usage:
+#   cp frontend/.env.example frontend/.env.local
+#   docker compose -f docker-compose.dev.yml up -d
+#   cd frontend && npm install && npm run dev
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: catadoption
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: directus_dev_password
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U directus"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  directus:
+    image: directus/directus:11
+    restart: unless-stopped
+    ports:
+      - "8055:8055"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SECRET: dev-secret-change-in-production
+      DB_CLIENT: pg
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: catadoption
+      DB_USER: directus
+      DB_PASSWORD: directus_dev_password
+      ADMIN_EMAIL: admin@example.com
+      ADMIN_PASSWORD: admin123
+      PUBLIC_URL: http://localhost:8055
+      STORAGE_LOCATIONS: local
+      STORAGE_LOCAL_ROOT: /directus/uploads
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "http://localhost:3000"
+    volumes:
+      - directus_dev_uploads:/directus/uploads
+
+volumes:
+  postgres_dev_data:
+  directus_dev_uploads:

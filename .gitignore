@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js build output
+frontend/.next/
+frontend/out/
+
+# Environment files (NEVER commit these)
+.env
+.env.local
+.env.production
+.env.*.local
+frontend/.env.local
+frontend/.env.production.local
+
+# Production env template (safe to commit)
+# .env.example — intentionally tracked
+
+# Docker volumes / local data
+postgres_data/
+directus_uploads/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Type checking
+*.tsbuildinfo
+
+# Vercel
+.vercel
