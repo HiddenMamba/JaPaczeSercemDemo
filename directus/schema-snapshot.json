@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "directus": "11.0.0",
+  "collections": [
+    {
+      "collection": "cat_traits",
+      "meta": { "icon": "star", "note": "Traits / special needs for cats (FIV+, blind, etc.)", "translations": null, "display_template": "{{translations.label}}", "sort_field": null },
+      "schema": { "name": "cat_traits" }
+    },
+    {
+      "collection": "cats",
+      "meta": { "icon": "pets", "note": "Cats available for adoption", "display_template": "{{translations.name}} ({{status}})", "sort_field": null },
+      "schema": { "name": "cats" }
+    },
+    {
+      "collection": "cats_traits",
+      "meta": { "icon": "import_export", "hidden": true, "note": "Junction: cats ↔ cat_traits" },
+      "schema": { "name": "cats_traits" }
+    },
+    {
+      "collection": "cats_files",
+      "meta": { "icon": "photo_library", "hidden": true, "note": "Junction: cats ↔ directus_files (photos)" },
+      "schema": { "name": "cats_files" }
+    },
+    {
+      "collection": "news",
+      "meta": { "icon": "article", "note": "News articles / blog posts", "display_template": "{{translations.title}}", "sort_field": null },
+      "schema": { "name": "news" }
+    },
+    {
+      "collection": "pages",
+      "meta": { "icon": "description", "note": "Static CMS pages (about, contact)", "display_template": "{{slug}}", "sort_field": null },
+      "schema": { "name": "pages" }
+    },
+    {
+      "collection": "documents",
+      "meta": { "icon": "folder", "note": "Downloadable documents (PDFs, forms, reports)", "display_template": "{{translations.name}}", "sort_field": null },
+      "schema": { "name": "documents" }
+    },
+    {
+      "collection": "menu_items",
+      "meta": { "icon": "menu", "note": "Navigation menu items", "display_template": "{{translations.label}} → {{url}}", "sort_field": "order" },
+      "schema": { "name": "menu_items" }
+    },
+    {
+      "collection": "social_links",
+      "meta": { "icon": "share", "note": "Social media links", "display_template": "{{platform}}: {{url}}", "sort_field": null },
+      "schema": { "name": "social_links" }
+    }
+  ],
+  "fields": [
+    { "collection": "cat_traits", "field": "id",   "type": "uuid", "schema": { "is_primary_key": true, "has_auto_increment": false }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "cat_traits", "field": "icon", "type": "string", "schema": {}, "meta": { "interface": "input", "note": "Emoji or icon name, e.g. 👁️" } },
+    { "collection": "cat_traits", "field": "translations", "type": "alias", "meta": { "interface": "translations", "options": { "languageField": "languages_code", "defaultLanguage": "en" }, "special": ["translations"] } },
+
+    { "collection": "cats", "field": "id",         "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "cats", "field": "slug",       "type": "string",  "schema": { "is_unique": true, "is_nullable": false }, "meta": { "interface": "input", "note": "URL-friendly unique identifier, e.g. whiskers-2024" } },
+    { "collection": "cats", "field": "status",     "type": "string",  "schema": { "default_value": "available" }, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Available","value": "available"},{"text": "Reserved","value": "reserved"},{"text": "Adopted","value": "adopted"}] }, "width": "half" } },
+    { "collection": "cats", "field": "category",   "type": "string",  "schema": {}, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Kitten (< 1 yr)","value": "kitten"},{"text": "Adult (1–7 yrs)","value": "adult"},{"text": "Senior (7+ yrs)","value": "senior"}] }, "width": "half" } },
+    { "collection": "cats", "field": "gender",     "type": "string",  "schema": { "default_value": "unknown" }, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Male","value": "male"},{"text": "Female","value": "female"},{"text": "Unknown","value": "unknown"}] }, "width": "half" } },
+    { "collection": "cats", "field": "age_years",  "type": "integer", "schema": { "is_nullable": true }, "meta": { "interface": "input", "width": "half", "note": "Age in full years" } },
+    { "collection": "cats", "field": "age_months", "type": "integer", "schema": { "is_nullable": true }, "meta": { "interface": "input", "width": "half", "note": "Additional months (0–11)" } },
+    { "collection": "cats", "field": "photos",     "type": "alias",   "meta": { "interface": "files", "special": ["files"], "note": "Upload cat photos — first photo shown as main" } },
+    { "collection": "cats", "field": "traits",     "type": "alias",   "meta": { "interface": "list-m2m", "special": ["m2m"], "options": { "template": "{{cat_traits_id.translations.label}}" }, "note": "Select applicable traits" } },
+    { "collection": "cats", "field": "translations", "type": "alias", "meta": { "interface": "translations", "options": { "languageField": "languages_code", "defaultLanguage": "en" }, "special": ["translations"] } },
+
+    { "collection": "cats_traits", "field": "id",              "type": "integer", "schema": { "is_primary_key": true, "has_auto_increment": true }, "meta": { "hidden": true } },
+    { "collection": "cats_traits", "field": "cats_id",         "type": "uuid",    "schema": {}, "meta": { "hidden": true } },
+    { "collection": "cats_traits", "field": "cat_traits_id",   "type": "uuid",    "schema": {}, "meta": { "hidden": true } },
+
+    { "collection": "cats_files", "field": "id",                    "type": "integer", "schema": { "is_primary_key": true, "has_auto_increment": true }, "meta": { "hidden": true } },
+    { "collection": "cats_files", "field": "cats_id",               "type": "uuid",    "schema": {}, "meta": { "hidden": true } },
+    { "collection": "cats_files", "field": "directus_files_id",     "type": "uuid",    "schema": {}, "meta": { "hidden": true } },
+
+    { "collection": "news", "field": "id",           "type": "uuid",      "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "news", "field": "slug",         "type": "string",    "schema": { "is_unique": true, "is_nullable": false }, "meta": { "interface": "input" } },
+    { "collection": "news", "field": "published_at", "type": "timestamp", "schema": {}, "meta": { "interface": "datetime", "width": "half" } },
+    { "collection": "news", "field": "cover_image",  "type": "uuid",      "schema": { "is_nullable": true, "foreign_key_table": "directus_files", "foreign_key_column": "id" }, "meta": { "interface": "file-image" } },
+    { "collection": "news", "field": "translations", "type": "alias",     "meta": { "interface": "translations", "options": { "languageField": "languages_code", "defaultLanguage": "en" }, "special": ["translations"] } },
+
+    { "collection": "pages", "field": "id",           "type": "uuid",   "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "pages", "field": "slug",         "type": "string", "schema": { "is_unique": true }, "meta": { "interface": "input", "note": "e.g. about, contact" } },
+    { "collection": "pages", "field": "translations", "type": "alias",  "meta": { "interface": "translations", "options": { "languageField": "languages_code", "defaultLanguage": "en" }, "special": ["translations"] } },
+
+    { "collection": "documents", "field": "id",           "type": "uuid",   "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "documents", "field": "file",         "type": "uuid",   "schema": { "is_nullable": false, "foreign_key_table": "directus_files", "foreign_key_column": "id" }, "meta": { "interface": "file", "note": "Upload PDF or document" } },
+    { "collection": "documents", "field": "category",     "type": "string", "schema": { "default_value": "other" }, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Financial Reports","value": "financial"},{"text": "Adoption Forms","value": "adoption"},{"text": "Other","value": "other"}] } } },
+    { "collection": "documents", "field": "translations", "type": "alias",  "meta": { "interface": "translations", "options": { "languageField": "languages_code", "defaultLanguage": "en" }, "special": ["translations"] } },
+
+    { "collection": "menu_items", "field": "id",              "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "menu_items", "field": "url",             "type": "string",  "schema": {}, "meta": { "interface": "input", "note": "e.g. /cats or https://..." } },
+    { "collection": "menu_items", "field": "order",           "type": "integer", "schema": { "default_value": 0 }, "meta": { "interface": "input-integer", "width": "half" } },
+    { "collection": "menu_items", "field": "open_in_new_tab", "type": "boolean", "schema": { "default_value": false }, "meta": { "interface": "boolean", "width": "half" } },
+    { "collection": "menu_items", "field": "parent",          "type": "uuid",    "schema": { "is_nullable": true }, "meta": { "interface": "select-dropdown-m2o", "note": "Leave empty for top-level item" } },
+    { "collection": "menu_items", "field": "translations",    "type": "alias",   "meta": { "interface": "translations", "options": { "languageField": "languages_code", "defaultLanguage": "en" }, "special": ["translations"] } },
+
+    { "collection": "social_links", "field": "id",       "type": "uuid",   "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "social_links", "field": "platform", "type": "string", "schema": {}, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Facebook","value": "facebook"},{"text": "Instagram","value": "instagram"},{"text": "Twitter / X","value": "twitter"},{"text": "YouTube","value": "youtube"},{"text": "TikTok","value": "tiktok"}] } } },
+    { "collection": "social_links", "field": "url",      "type": "string", "schema": {}, "meta": { "interface": "input" } },
+    { "collection": "social_links", "field": "icon",     "type": "string", "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "Optional custom icon name" } }
+  ],
+  "relations": [
+    { "collection": "cats_traits", "field": "cats_id",       "related_collection": "cats",       "meta": { "one_field": "traits",  "junction_field": "cat_traits_id" }, "schema": { "on_delete": "CASCADE" } },
+    { "collection": "cats_traits", "field": "cat_traits_id", "related_collection": "cat_traits", "meta": { "one_field": null,      "junction_field": "cats_id" },       "schema": { "on_delete": "CASCADE" } },
+    { "collection": "cats_files",  "field": "cats_id",       "related_collection": "cats",               "meta": { "one_field": "photos", "junction_field": "directus_files_id" }, "schema": { "on_delete": "CASCADE" } },
+    { "collection": "cats_files",  "field": "directus_files_id", "related_collection": "directus_files", "meta": { "one_field": null, "junction_field": "cats_id" }, "schema": { "on_delete": "CASCADE" } },
+    { "collection": "news",     "field": "cover_image",  "related_collection": "directus_files", "schema": { "on_delete": "SET NULL" } },
+    { "collection": "documents","field": "file",          "related_collection": "directus_files", "schema": { "on_delete": "RESTRICT" } },
+    { "collection": "menu_items","field": "parent",       "related_collection": "menu_items",     "schema": { "on_delete": "SET NULL" } }
+  ]
+}

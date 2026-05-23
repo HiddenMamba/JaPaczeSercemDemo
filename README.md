@@ -37,7 +37,7 @@ cat-adoption/
 
 ---
 
-## 🚀 CZĘŚĆ 1
+## 🚀 CZĘŚĆ 1 — Demo online (BEZPŁATNE)
 
 ### Wymagania
 - Konto GitHub

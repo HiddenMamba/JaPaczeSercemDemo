@@ -1,0 +1,53 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install & lint
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run lint
+          npm run type-check
+
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host:     ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key:      ${{ secrets.VPS_SSH_KEY }}
+          port:     ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            set -e
+            cd ~/cat-adoption
+
+            # Pull latest code
+            git pull origin main
+
+            # Rebuild & restart only changed services (zero-downtime for DB)
+            docker compose pull directus
+            docker compose build frontend
+            docker compose up -d --no-deps frontend directus
+            docker compose restart caddy
+
+            # Clean up old images
+            docker image prune -f
+
+            echo "✅ Deployment complete"

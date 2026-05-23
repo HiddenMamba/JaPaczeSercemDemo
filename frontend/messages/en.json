@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "home": "Home",
+    "cats": "Adopt a Cat",
+    "news": "News",
+    "about": "About Us",
+    "contact": "Contact",
+    "documents": "Documents"
+  },
+  "home": {
+    "hero_title": "Give a Cat a Forever Home",
+    "hero_subtitle": "Browse our cats looking for loving families and open your heart today.",
+    "cta_browse": "Meet Our Cats",
+    "cta_randomize": "Surprise Me 🎲",
+    "featured_cats": "Featured Cats",
+    "latest_news": "Latest News",
+    "see_all_news": "See All News",
+    "see_all_cats": "See All Cats"
+  },
+  "cats": {
+    "title": "Adopt a Cat",
+    "subtitle": "All our cats are vaccinated, neutered, and ready to find their forever home.",
+    "search_placeholder": "Search by name…",
+    "filter_category": "Category",
+    "filter_gender": "Gender",
+    "filter_status": "Status",
+    "filter_traits": "Special Needs & Traits",
+    "all": "All",
+    "randomize": "Random Cat 🎲",
+    "no_results": "No cats found with these filters. Try adjusting your search.",
+    "category_kitten": "Kitten",
+    "category_adult": "Adult",
+    "category_senior": "Senior",
+    "gender_male": "Male",
+    "gender_female": "Female",
+    "gender_unknown": "Unknown",
+    "status_available": "Available",
+    "status_reserved": "Reserved",
+    "status_adopted": "Adopted",
+    "age_years": "{years, plural, one {# year} other {# years}}",
+    "age_months": "{months, plural, one {# month} other {# months}}",
+    "age_unknown": "Age unknown",
+    "adopt_cta": "I'm Interested in Adopting",
+    "back_to_list": "← Back to all cats"
+  },
+  "news": {
+    "title": "News",
+    "subtitle": "Stories, updates, and announcements from our shelter.",
+    "read_more": "Read more →",
+    "published": "Published {date}"
+  },
+  "about": {
+    "title": "About Us",
+    "documents_title": "Documents & Reports",
+    "documents_subtitle": "Download our financial reports, adoption forms, and other documents.",
+    "download": "Download",
+    "category_financial": "Financial Reports",
+    "category_adoption": "Adoption Forms",
+    "category_other": "Other"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Have a question or want to adopt? Get in touch!",
+    "name": "Your Name",
+    "email": "Email Address",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send Message",
+    "sending": "Sending…",
+    "success": "Thank you! We'll get back to you soon.",
+    "error": "Something went wrong. Please try again or email us directly."
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong.",
+    "back": "Back",
+    "close": "Close",
+    "language": "Language",
+    "skip_to_content": "Skip to main content"
+  },
+  "footer": {
+    "tagline": "Finding forever homes for cats in need.",
+    "rights": "All rights reserved."
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "home": "Strona główna",
+    "cats": "Adoptuj kota",
+    "news": "Aktualności",
+    "about": "O nas",
+    "contact": "Kontakt",
+    "documents": "Dokumenty"
+  },
+  "home": {
+    "hero_title": "Daj kotu dom na zawsze",
+    "hero_subtitle": "Przeglądaj nasze koty szukające kochających rodzin i otwórz swoje serce już dziś.",
+    "cta_browse": "Poznaj nasze koty",
+    "cta_randomize": "Zaskoczy mnie 🎲",
+    "featured_cats": "Wyróżnione koty",
+    "latest_news": "Ostatnie aktualności",
+    "see_all_news": "Wszystkie aktualności",
+    "see_all_cats": "Wszystkie koty"
+  },
+  "cats": {
+    "title": "Adoptuj kota",
+    "subtitle": "Wszystkie nasze koty są zaszczepione, wykastrowane i gotowe do znalezienia domu.",
+    "search_placeholder": "Szukaj po imieniu…",
+    "filter_category": "Kategoria",
+    "filter_gender": "Płeć",
+    "filter_status": "Status",
+    "filter_traits": "Cechy szczególne",
+    "all": "Wszystkie",
+    "randomize": "Losowy kot 🎲",
+    "no_results": "Nie znaleziono kotów. Spróbuj zmienić filtry.",
+    "category_kitten": "Kocię",
+    "category_adult": "Dorosły",
+    "category_senior": "Senior",
+    "gender_male": "Kocur",
+    "gender_female": "Kotka",
+    "gender_unknown": "Nieznana",
+    "status_available": "Dostępny",
+    "status_reserved": "Zarezerwowany",
+    "status_adopted": "Adoptowany",
+    "age_years": "{years, plural, one {# rok} few {# lata} other {# lat}}",
+    "age_months": "{months, plural, one {# miesiąc} few {# miesiące} other {# miesięcy}}",
+    "age_unknown": "Wiek nieznany",
+    "adopt_cta": "Chcę adoptować",
+    "back_to_list": "← Powrót do listy"
+  },
+  "news": {
+    "title": "Aktualności",
+    "subtitle": "Historie, aktualizacje i ogłoszenia ze schroniska.",
+    "read_more": "Czytaj więcej →",
+    "published": "Opublikowano {date}"
+  },
+  "about": {
+    "title": "O nas",
+    "documents_title": "Dokumenty i raporty",
+    "documents_subtitle": "Pobierz nasze raporty finansowe, formularze adopcyjne i inne dokumenty.",
+    "download": "Pobierz",
+    "category_financial": "Raporty finansowe",
+    "category_adoption": "Formularze adopcyjne",
+    "category_other": "Inne"
+  },
+  "contact": {
+    "title": "Kontakt",
+    "subtitle": "Masz pytanie lub chcesz adoptować? Skontaktuj się z nami!",
+    "name": "Twoje imię",
+    "email": "Adres e-mail",
+    "subject": "Temat",
+    "message": "Wiadomość",
+    "send": "Wyślij wiadomość",
+    "sending": "Wysyłanie…",
+    "success": "Dziękujemy! Odezwiemy się wkrótce.",
+    "error": "Coś poszło nie tak. Spróbuj ponownie lub napisz bezpośrednio na e-mail."
+  },
+  "common": {
+    "loading": "Ładowanie…",
+    "error": "Coś poszło nie tak.",
+    "back": "Wróć",
+    "close": "Zamknij",
+    "language": "Język",
+    "skip_to_content": "Przejdź do treści"
+  },
+  "footer": {
+    "tagline": "Szukamy domów dla kotów potrzebujących miłości.",
+    "rights": "Wszelkie prawa zastrzeżone."
+  }
+}
