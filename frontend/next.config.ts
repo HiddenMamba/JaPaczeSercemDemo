@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: process.env.DIRECTUS_HOST ?? "localhost",
+        hostname: process.env.DIRECTUS_HOST ?? "ja-pacze-sercem-cms.onrender.com",
         port: "",
         pathname: "/assets/**",
       },

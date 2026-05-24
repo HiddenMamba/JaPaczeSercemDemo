@@ -20,7 +20,7 @@ import type {
 
 // ─── Client ──────────────────────────────────────────────────────────────────
 
-const directusUrl = process.env.DIRECTUS_URL ?? "http://localhost:8055";
+const directusUrl = process.env.DIRECTUS_URL ?? "https://ja-pacze-sercem-cms.onrender.com";
 const directusToken = process.env.DIRECTUS_TOKEN ?? "";
 
 export const directus = createDirectus(directusUrl)
