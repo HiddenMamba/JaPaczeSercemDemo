@@ -4,6 +4,10 @@ import { useState, useMemo, useTransition } from "react";
 import { CatCard } from "./CatCard";
 import { CatSlideout } from "./CatSlideout";
 import type { CatResolved } from "@/lib/types";
+import { CAT_CATEGORIES, CATEGORY_LABELS, type CatCategory } from "@/lib/cat-category";
+import { CAT_GENDERS_FILTERABLE, GENDER_LABELS, type CatGender } from "@/lib/cat-gender";
+import { CAT_SORT_VALUES, SORT_LABELS, type CatSort } from "@/lib/cat-sort";
+import { CAT_STATUSES, STATUS_LABELS, type CatStatus } from "@/lib/cat-status";
 
 interface Trait {
   id: string;
@@ -16,48 +20,14 @@ interface Props {
   traits: Trait[];
 }
 
-type CategoryValue = "kitten" | "adult" | "senior";
-type GenderValue = "male" | "female" | "unknown";
-type StatusValue = "available" | "reserved" | "adopted" | "rainbow";
-type SortValue = "name" | "age_asc" | "age_desc" | "joined_desc" | "joined_asc";
-
-const SORT_LABELS: Record<SortValue, string> = {
-  name:        "Imię (A–Z)",
-  age_asc:     "Wiek (najmłodsze)",
-  age_desc:    "Wiek (najstarsze)",
-  joined_desc: "Najnowsze",
-  joined_asc:  "Najdłużej z nami",
-};
-
-const CATEGORY_LABELS: Record<CategoryValue, string> = {
-  kitten: "Kocię",
-  adult: "Dorosły",
-  senior: "Senior",
-};
-const GENDER_LABELS: Record<GenderValue, string> = {
-  male: "Kocur",
-  female: "Kotka",
-  unknown: "Nieznana płeć",
-};
-const STATUS_LABELS: Record<StatusValue, string> = {
-  available: "Dostępny",
-  reserved: "Zarezerwowany",
-  adopted: "Adoptowany",
-  rainbow: "Za tęczowym mostem 🌈",
-};
-
-const ALL_STATUSES: StatusValue[] = ["available", "reserved", "adopted", "rainbow"];
-const ALL_CATEGORIES: CategoryValue[] = ["kitten", "adult", "senior"];
-const ALL_GENDERS: GenderValue[] = ["male", "female", "unknown"];
-
 export function CatBrowser({ cats, traits }: Props) {
   const [, startTransition] = useTransition();
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<SortValue>("joined_desc");
+  const [sort, setSort] = useState<CatSort>("joined_desc");
   // Multi-select: empty set = "all" (show everything)
-  const [categories, setCategories] = useState<Set<CategoryValue>>(new Set());
-  const [genders, setGenders] = useState<Set<GenderValue>>(new Set());
-  const [statuses, setStatuses] = useState<Set<StatusValue>>(new Set(["available"]));
+  const [categories, setCategories] = useState<Set<CatCategory>>(new Set());
+  const [genders, setGenders] = useState<Set<CatGender>>(new Set());
+  const [statuses, setStatuses] = useState<Set<CatStatus>>(new Set(["available"]));
   const [selectedTraits, setSelectedTraits] = useState<Set<string>>(new Set());
   const [slideoutCat, setSlideoutCat] = useState<string | null>(null);
 
@@ -66,7 +36,7 @@ export function CatBrowser({ cats, traits }: Props) {
       if (search && !cat.name.toLowerCase().includes(search.toLowerCase())) return false;
       if (categories.size > 0 && !categories.has(cat.category)) return false;
       if (genders.size > 0 && !genders.has(cat.gender)) return false;
-      if (statuses.size > 0 && !statuses.has(cat.status as StatusValue)) return false;
+      if (statuses.size > 0 && !statuses.has(cat.status)) return false;
       if (selectedTraits.size > 0) {
         const catTraitIds = new Set(cat.traits.map((tr) => tr.id));
         for (const traitId of selectedTraits) {
@@ -89,13 +59,13 @@ export function CatBrowser({ cats, traits }: Props) {
     });
   }, [cats, search, categories, genders, statuses, selectedTraits, sort]);
 
-  function toggleCategory(v: CategoryValue) {
+  function toggleCategory(v: CatCategory) {
     startTransition(() => setCategories((prev) => { const n = new Set(prev); n.has(v) ? n.delete(v) : n.add(v); return n; }));
   }
-  function toggleGender(v: GenderValue) {
+  function toggleGender(v: CatGender) {
     startTransition(() => setGenders((prev) => { const n = new Set(prev); n.has(v) ? n.delete(v) : n.add(v); return n; }));
   }
-  function toggleStatus(v: StatusValue) {
+  function toggleStatus(v: CatStatus) {
     startTransition(() => setStatuses((prev) => { const n = new Set(prev); n.has(v) ? n.delete(v) : n.add(v); return n; }));
   }
   function toggleTrait(id: string) {
@@ -125,10 +95,10 @@ export function CatBrowser({ cats, traits }: Props) {
           />
           <select
             value={sort}
-            onChange={(e) => setSort(e.target.value as SortValue)}
+            onChange={(e) => setSort(e.target.value as CatSort)}
             className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-300"
           >
-            {(Object.keys(SORT_LABELS) as SortValue[]).map((v) => (
+            {CAT_SORT_VALUES.map((v) => (
               <option key={v} value={v}>{SORT_LABELS[v]}</option>
             ))}
           </select>
@@ -146,7 +116,7 @@ export function CatBrowser({ cats, traits }: Props) {
             >
               Wszystkie
             </Chip>
-            {ALL_STATUSES.map((v) => (
+            {CAT_STATUSES.map((v) => (
               <Chip key={v} active={statuses.has(v)} onClick={() => toggleStatus(v)}>
                 {STATUS_LABELS[v]}
               </Chip>
@@ -161,7 +131,7 @@ export function CatBrowser({ cats, traits }: Props) {
             >
               Wszystkie
             </Chip>
-            {ALL_CATEGORIES.map((v) => (
+            {CAT_CATEGORIES.map((v) => (
               <Chip key={v} active={categories.has(v)} onClick={() => toggleCategory(v)}>
                 {CATEGORY_LABELS[v]}
               </Chip>
@@ -176,7 +146,7 @@ export function CatBrowser({ cats, traits }: Props) {
             >
               Wszystkie
             </Chip>
-            {ALL_GENDERS.filter(g => g !== "unknown").map((v) => (
+            {CAT_GENDERS_FILTERABLE.map((v) => (
               <Chip key={v} active={genders.has(v)} onClick={() => toggleGender(v)}>
                 {GENDER_LABELS[v]}
               </Chip>

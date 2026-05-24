@@ -23,6 +23,7 @@ cat-adoption/
 │   ├── schema-snapshot.json   # Schemat bazy danych (wersjonowany)
 │   ├── seed.sh                # Skrypt seedowania danych
 │   ├── patch-labels.sh        # Skrypt polskich etykiet pól
+│   ├── patch-cat-status.sh    # Dodaje status inTreatment do kotów
 │   └── run-render.sh          # Interaktywny runner dla Render
 ├── docker-compose.yml         # Produkcja (VPS)
 ├── docker-compose.dev.yml     # Development lokalny
@@ -317,6 +318,8 @@ bash directus/seed.sh
 | `bash directus/run-render.sh` | Interaktywny runner (seed lub patch-labels) |
 | `bash directus/seed.sh` | Seedowanie danych (lokalnie) |
 | `bash directus/patch-labels.sh` | Polskie etykiety pól w Directus |
+| `bash directus/patch-cat-status.sh` | Status „W trakcie leczenia” (`inTreatment`) w Directus |
+| `powershell -File directus/patch-cat-status.ps1` | To samo (Windows) |
 
 ---
 

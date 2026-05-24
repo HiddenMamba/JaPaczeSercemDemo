@@ -18,17 +18,21 @@ export DIRECTUS_PASSWORD="$PASSWORD"
 
 echo ""
 echo "Which script to run?"
-echo "  1) seed.sh          — full seed (cats, news, pages, menu, social, questions)"
-echo "  2) patch-labels.sh  — Polish field labels + admin language only"
+echo "  1) seed.sh            — full seed (cats, news, pages, menu, social, questions)"
+echo "  2) patch-labels.sh    — Polish field labels + admin language only"
+echo "  3) patch-cat-status.sh — add inTreatment status to cats dropdown"
 echo ""
-read -p "Choose [1/2]: " CHOICE
+read -p "Choose [1/2/3]: " CHOICE
 
 if [ "$CHOICE" = "1" ]; then
   bash directus/seed.sh
 elif [ "$CHOICE" = "2" ]; then
   bash directus/patch-labels.sh
+elif [ "$CHOICE" = "3" ]; then
+  bash directus/patch-cat-status.sh
 else
   echo "Invalid choice. Run manually:"
   echo "  bash directus/seed.sh"
   echo "  bash directus/patch-labels.sh"
+  echo "  bash directus/patch-cat-status.sh"
 fi

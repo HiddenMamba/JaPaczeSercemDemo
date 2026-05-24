@@ -35,6 +35,7 @@
     "gender_female": "Kotka",
     "gender_unknown": "Nieznana",
     "status_available": "Dostępny",
+    "status_inTreatment": "W trakcie leczenia",
     "status_reserved": "Zarezerwowany",
     "status_adopted": "Adoptowany",
     "age_years": "{years, plural, one {# rok} few {# lata} other {# lat}}",

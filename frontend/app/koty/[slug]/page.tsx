@@ -2,6 +2,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getCats, getCat } from "@/lib/directus";
 import { CatPhotoGallery } from "@/components/CatPhotoGallery";
+import { CATEGORY_LABELS } from "@/lib/cat-category";
+import { GENDER_LABELS } from "@/lib/cat-gender";
+import { STATUS_LABELS } from "@/lib/cat-status";
 
 export const dynamicParams = true;
 
@@ -28,24 +31,6 @@ export default async function CatPage({ params }: Props) {
   const { slug } = await params;
   const cat = await getCat(slug);
   if (!cat) notFound();
-
-  const STATUS_LABELS = {
-    available: "Dostępny",
-    inTreatment: "W trakcie leczenia",
-    reserved: "Zarezerwowany",
-    adopted: "Adoptowany",
-    rainbow: "🌈 Za tęczowym mostem",
-  };
-  const GENDER_LABELS = {
-    male: "Kocur",
-    female: "Kotka",
-    unknown: "Nieznana",
-  };
-  const CATEGORY_LABELS = {
-    kitten: "Kocię",
-    adult: "Dorosły",
-    senior: "Senior",
-  };
 
   return (
     <div className="section max-w-4xl mx-auto">

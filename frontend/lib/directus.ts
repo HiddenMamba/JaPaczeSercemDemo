@@ -4,6 +4,8 @@ import {
   readItems,
   staticToken,
 } from "@directus/sdk";
+import type { CatCategory } from "./cat-category";
+import type { CatSort } from "./cat-sort";
 import type {
   Cat,
   CatResolved,
@@ -70,7 +72,7 @@ function resolveCat(cat: any): CatResolved {
   const dob = cat.date_of_birth ?? null;
   const age = calcAge(dob);
   // Auto-derive category from DOB if available; fall back to stored value
-  const category = dob ? age.category : (cat.category as "kitten" | "adult" | "senior") ?? "adult";
+  const category = dob ? age.category : (cat.category as CatCategory) ?? "adult";
 
   return {
     id: cat.id,
@@ -83,7 +85,7 @@ function resolveCat(cat: any): CatResolved {
     age_years: age.years,
     age_months: age.months,
     gender: cat.gender ?? "unknown",
-    status: (cat.status ?? "available") as "available" | "reserved" | "adopted" | "rainbow",
+    status: (cat.status ?? "available") as CatResolved["status"],
     category,
     photos,
     traits,
@@ -142,7 +144,7 @@ export async function getCats(
     gender?: string;
     status?: string;
     traits?: string[];
-    sort?: "name" | "age_asc" | "age_desc" | "joined_asc" | "joined_desc";
+    sort?: CatSort;
   }
 ): Promise<CatResolved[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -542,7 +544,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
 // ─── Age calculation ──────────────────────────────────────────────────────────
 
-export function calcAge(dob: string | null): { years: number; months: number; category: "kitten" | "adult" | "senior" } {
+export function calcAge(dob: string | null): { years: number; months: number; category: CatCategory } {
   if (!dob) return { years: 0, months: 0, category: "adult" };
   const now = new Date();
   const birth = new Date(dob);

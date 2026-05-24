@@ -212,6 +212,16 @@ post_if_empty cats '{
   "story": "Luna trafila do nas po tym, jak jej wlasciciel musial wyjechac za granice. Jest dobrze oswojona i bardzo przywiazana do ludzi."
 }'
 post_if_empty cats '{
+  "slug": "puszek",
+  "name": "Puszek",
+  "status": "inTreatment",
+  "gender": "male",
+  "category": "adult",
+  "date_of_birth": "2019-08-12",
+  "description": "Puszek wraca do zdrowia po zabiegu. Szukamy spokojnego domu tymczasowego lub docelowego po zakończeniu leczenia.",
+  "story": "Aktualnie jest pod opieką weterynarza fundacji."
+}'
+post_if_empty cats '{
   "slug": "oliver",
   "name": "Oliver",
   "status": "available",

@@ -85,6 +85,12 @@ Write-Host "`n=== Demo Cats ==="
     story = "Luna trafila do nas po wyjezdzie wlasciciela."
   },
   @{
+    slug = "puszek"; name = "Puszek"; status = "inTreatment"; gender = "male"; category = "adult"
+    date_of_birth = "2019-08-12"
+    description = "Puszek wraca do zdrowia po zabiegu."
+    story = "Aktualnie jest pod opieka weterynarza fundacji."
+  },
+  @{
     slug = "oliver"; name = "Oliver"; status = "available"; gender = "male"; category = "adult"
     date_of_birth = "2020-06-01"
     description = "Oliver to energiczny kocur z duza osobowoscia."

@@ -1,5 +1,9 @@
 // ─── Directus Schema Types ───────────────────────────────────────────────────
 
+import type { CatCategory } from "./cat-category";
+import type { CatGender } from "./cat-gender";
+import type { CatStatus } from "./cat-status";
+
 export interface DirectusFile {
   id: string;
   filename_download: string;
@@ -21,9 +25,9 @@ export interface Cat {
   slug: string;
   date_of_birth: string | null;
   date_joined: string | null;
-  gender: "male" | "female" | "unknown";
-  status: "available" | "reserved" | "adopted" | "rainbow";
-  category: "kitten" | "adult" | "senior";
+  gender: CatGender;
+  status: CatStatus;
+  category: CatCategory;
   name: string;
   description: string;
   story: string | null;
@@ -87,7 +91,7 @@ export interface CatResolved {
   age_years: number;
   age_months: number;
   gender: Cat["gender"];
-  status: "available" | "reserved" | "adopted" | "rainbow";
+  status: CatStatus;
   category: Cat["category"];
   photos: DirectusFile[];
   traits: { id: string; label: string; icon: string | null }[];
