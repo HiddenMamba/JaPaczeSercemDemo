@@ -35,6 +35,7 @@ export default async function CatPage({ params }: Props) {
     available: "Dostępny",
     reserved: "Zarezerwowany",
     adopted: "Adoptowany",
+    rainbow: "🌈 Za tęczowym mostem",
   };
   const GENDER_LABELS = {
     male: "Kocur",
@@ -123,7 +124,7 @@ export default async function CatPage({ params }: Props) {
             </div>
           )}
 
-          {cat.status === "available" && (
+          {(cat.status === "available") && (
             <Link href={`/adoptuj?cat=${cat.slug}`} className="btn-primary w-full justify-center py-3 text-base">
               Chcę adoptować
             </Link>

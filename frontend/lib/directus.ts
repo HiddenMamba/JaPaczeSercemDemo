@@ -69,6 +69,8 @@ function resolveCat(cat: any): CatResolved {
 
   const dob = cat.date_of_birth ?? null;
   const age = calcAge(dob);
+  // Auto-derive category from DOB if available; fall back to stored value
+  const category = dob ? age.category : (cat.category as "kitten" | "adult" | "senior") ?? "adult";
 
   return {
     id: cat.id,
@@ -80,8 +82,8 @@ function resolveCat(cat: any): CatResolved {
     age_years: age.years,
     age_months: age.months,
     gender: cat.gender ?? "unknown",
-    status: cat.status ?? "available",
-    category: (cat.category as "kitten" | "adult" | "senior") ?? age.category,
+    status: (cat.status ?? "available") as "available" | "reserved" | "adopted" | "rainbow",
+    category,
     photos,
     traits,
   };

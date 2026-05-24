@@ -228,12 +228,56 @@ post cats '{
   "story": null
 }'
 
+# ── Adoption Questions ────────────────────────────────────────────────────────
 echo ""
-echo "✅ Seed complete! $(date)"
+echo "=== Adoption Questions ==="
+post adoption_questions '{"question":"Imie i nazwisko","field_type":"text","required":true,"active":true,"order":1,"placeholder":"Jan Kowalski","options":null}'
+post adoption_questions '{"question":"Adres e-mail","field_type":"text","required":true,"active":true,"order":2,"placeholder":"jan@example.com","options":null}'
+post adoption_questions '{"question":"Numer telefonu","field_type":"text","required":false,"active":true,"order":3,"placeholder":"+48 600 000 000","options":null}'
+post adoption_questions '{"question":"Gdzie mieszkasz?","field_type":"radio","required":true,"active":true,"order":4,"placeholder":null,"options":[{"label":"Dom z ogrodem","value":"house_garden"},{"label":"Mieszkanie z balkonem","value":"apartment_balcony"},{"label":"Mieszkanie bez balkonu","value":"apartment"}]}'
+post adoption_questions '{"question":"Czy masz inne zwierzeta?","field_type":"multiselect","required":true,"active":true,"order":5,"placeholder":null,"options":[{"label":"Pies","value":"dog"},{"label":"Inny kot","value":"cat"},{"label":"Inne","value":"other"},{"label":"Brak zwierzat","value":"none"}]}'
+post adoption_questions '{"question":"Czy miałes/as wczesniej kota?","field_type":"radio","required":true,"active":true,"order":6,"placeholder":null,"options":[{"label":"Tak, mam doswiadczenie","value":"yes"},{"label":"Nie, to bedzie moj pierwszy kot","value":"no"}]}'
+post adoption_questions '{"question":"Ile godzin dziennie kot bedzie sam w domu?","field_type":"radio","required":true,"active":true,"order":7,"placeholder":null,"options":[{"label":"Do 4 godzin","value":"0-4h"},{"label":"4-8 godzin","value":"4-8h"},{"label":"Powyzej 8 godzin","value":"8h+"}]}'
+post adoption_questions '{"question":"Dlaczego chcesz adoptowac tego kota? Napisz cos o sobie.","field_type":"textarea","required":true,"active":true,"order":8,"placeholder":"Opowiedz nam o sobie...","options":null}'
+
+# ── Set public read access ─────────────────────────────────────────────────────
+echo ""
+echo "=== Public file access ==="
+# Get the public role ID
+PUBLIC_ROLE=$(curl -s "$DIRECTUS_URL/roles?filter[name][_eq]=Public&fields=id" \
+  -H "Authorization: Bearer $TOKEN" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['data'][0]['id'])" 2>/dev/null)
+
+if [ -n "$PUBLIC_ROLE" ]; then
+  # Set directus_files public read
+  curl -s -X POST "$DIRECTUS_URL/permissions" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"role\":\"$PUBLIC_ROLE\",\"collection\":\"directus_files\",\"action\":\"read\",\"fields\":[\"*\"]}" \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); print('   ✓ directus_files public read' if 'data' in d else '   already set or error')" 2>/dev/null
+
+  # Set cats_files public read
+  curl -s -X POST "$DIRECTUS_URL/permissions" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"role\":\"$PUBLIC_ROLE\",\"collection\":\"cats_files\",\"action\":\"read\",\"fields\":[\"*\"]}" \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); print('   ✓ cats_files public read' if 'data' in d else '   already set or error')" 2>/dev/null
+
+  # Set cats_traits public read
+  curl -s -X POST "$DIRECTUS_URL/permissions" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"role\":\"$PUBLIC_ROLE\",\"collection\":\"cats_traits\",\"action\":\"read\",\"fields\":[\"*\"]}" \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); print('   ✓ cats_traits public read' if 'data' in d else '   already set or error')" 2>/dev/null
+else
+  echo "   ⚠ Could not find Public role - set directus_files read access manually in admin"
+fi
+
 echo ""
 echo "Next steps:"
 echo "  1. Go to $DIRECTUS_URL/admin"
 echo "  2. Add photos to cats in the Cats collection"
 echo "  3. Update social media URLs in Social Links"
 echo "  4. Add your real contact info and pages content"
+echo "  5. In Settings → Access Policies → Public, verify all collections have Read access"
 echo ""

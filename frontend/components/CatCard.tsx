@@ -7,7 +7,7 @@ import { assetUrl } from "@/lib/directus";
 import { CatSlideout } from "./CatSlideout";
 import type { CatResolved } from "@/lib/types";
 
-const STATUS_LABELS = { available: "Dostępny", reserved: "Zarezerwowany", adopted: "Adoptowany" };
+const STATUS_LABELS = { available: "Dostępny", reserved: "Zarezerwowany", adopted: "Adoptowany", rainbow: "🌈 Za tęczowym mostem" };
 const CATEGORY_LABELS = { kitten: "Kocię", adult: "Dorosły", senior: "Senior" };
 const GENDER_LABELS = { male: "Kocur", female: "Kotka", unknown: "Nieznana" };
 

@@ -21,7 +21,7 @@ export interface Cat {
   slug: string;
   date_of_birth: string | null;
   gender: "male" | "female" | "unknown";
-  status: "available" | "reserved" | "adopted";
+  status: "available" | "reserved" | "adopted" | "rainbow";
   category: "kitten" | "adult" | "senior";
   name: string;
   description: string;
@@ -83,7 +83,7 @@ export interface CatResolved {
   age_years: number;
   age_months: number;
   gender: Cat["gender"];
-  status: Cat["status"];
+  status: "available" | "reserved" | "adopted" | "rainbow";
   category: Cat["category"];
   photos: DirectusFile[];
   traits: { id: string; label: string; icon: string | null }[];
