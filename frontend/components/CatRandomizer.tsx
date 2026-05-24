@@ -2,26 +2,23 @@
 
 import { useState } from "react";
 import { CatSlideout } from "./CatSlideout";
-import type { CatResolved, Locale } from "@/lib/types";
+import type { CatResolved } from "@/lib/types";
 
 interface Props {
-  locale: Locale;
   label: string;
 }
 
-export function CatRandomizerButton({ locale, label }: Props) {
+export function CatRandomizerButton({ label }: Props) {
   const [cat, setCat] = useState<CatResolved | null>(null);
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleClick() {
     setLoading(true);
     try {
-      const res = await fetch(`/api/random-cat?locale=${locale}`);
+      const res = await fetch("/api/random-cat");
       if (res.ok) {
-        const data: CatResolved = await res.json();
+        const data = await res.json();
         setCat(data);
-        setOpen(true);
       }
     } finally {
       setLoading(false);
@@ -35,16 +32,10 @@ export function CatRandomizerButton({ locale, label }: Props) {
         disabled={loading}
         className="btn-secondary text-base px-8 py-4"
       >
-        {loading ? "🔄 Loading…" : label}
+        {loading ? "Szukam…" : label}
       </button>
-
       {cat && (
-        <CatSlideout
-          cat={cat}
-          locale={locale}
-          open={open}
-          onClose={() => setOpen(false)}
-        />
+        <CatSlideout cat={cat} open={!!cat} onClose={() => setCat(null)} />
       )}
     </>
   );

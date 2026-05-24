@@ -1,7 +1,5 @@
 // ─── Directus Schema Types ───────────────────────────────────────────────────
 
-export type Locale = "en" | "pl";
-
 export interface DirectusFile {
   id: string;
   filename_download: string;
@@ -14,29 +12,22 @@ export interface DirectusFile {
 
 export interface CatTrait {
   id: string;
-  translations: {
-    languages_code: Locale;
-    label: string;
-  }[];
-  icon: string | null; // emoji or icon name
+  label: string;
+  icon: string | null;
 }
 
 export interface Cat {
   id: string;
   slug: string;
-  age_years: number | null;
-  age_months: number | null;
+  date_of_birth: string | null;
   gender: "male" | "female" | "unknown";
   status: "available" | "reserved" | "adopted";
   category: "kitten" | "adult" | "senior";
+  name: string;
+  description: string;
+  story: string | null;
   photos: { directus_files_id: DirectusFile }[];
   traits: { cat_traits_id: CatTrait }[];
-  translations: {
-    languages_code: Locale;
-    name: string;
-    description: string;
-    story: string | null;
-  }[];
 }
 
 export interface NewsArticle {
@@ -44,32 +35,23 @@ export interface NewsArticle {
   slug: string;
   published_at: string;
   cover_image: DirectusFile | null;
-  translations: {
-    languages_code: Locale;
-    title: string;
-    body: string;
-    excerpt: string | null;
-  }[];
+  title: string;
+  body: string;
+  excerpt: string | null;
 }
 
 export interface Page {
   id: string;
   slug: string;
-  translations: {
-    languages_code: Locale;
-    title: string;
-    content: string;
-  }[];
+  title: string;
+  content: string;
 }
 
 export interface Document {
   id: string;
   file: DirectusFile;
   category: "financial" | "adoption" | "other";
-  translations: {
-    languages_code: Locale;
-    name: string;
-  }[];
+  name: string;
 }
 
 export interface MenuItem {
@@ -78,10 +60,7 @@ export interface MenuItem {
   order: number;
   open_in_new_tab: boolean;
   parent: string | null;
-  translations: {
-    languages_code: Locale;
-    label: string;
-  }[];
+  label: string;
   children?: MenuItem[];
 }
 
@@ -92,7 +71,7 @@ export interface SocialLink {
   icon: string;
 }
 
-// ─── Convenience types (locale-resolved) ─────────────────────────────────────
+// ─── Resolved types (same structure, kept for compatibility) ──────────────────
 
 export interface CatResolved {
   id: string;
@@ -100,9 +79,9 @@ export interface CatResolved {
   name: string;
   description: string;
   story: string | null;
-  date_of_birth: string | null;  // ISO date string, e.g. "2022-03-15"
-  age_years: number;             // calculated from date_of_birth
-  age_months: number;            // calculated from date_of_birth
+  date_of_birth: string | null;
+  age_years: number;
+  age_months: number;
   gender: Cat["gender"];
   status: Cat["status"];
   category: Cat["category"];

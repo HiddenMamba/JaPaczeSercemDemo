@@ -10,7 +10,6 @@ import type {
   NewsArticle,
   NewsArticleResolved,
   SocialLink,
-  Locale,
   DirectusFile,
 } from "./types";
 
@@ -33,40 +32,19 @@ export function assetUrl(fileId: string, params?: Record<string, string>): strin
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function resolveTranslation<T extends { languages_code: Locale }>(
-  translations: T[],
-  locale: Locale,
-  fallback: Locale = "en"
-): T {
-  return (
-    translations.find((t) => t.languages_code === locale) ??
-    translations.find((t) => t.languages_code === fallback) ??
-    translations[0]
-  );
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function resolveCat(cat: any, _locale: Locale): CatResolved {
-  const name = cat.name ?? cat.translations?.[0]?.name ?? cat.slug ?? "Unknown";
-  const description = cat.description ?? cat.translations?.[0]?.description ?? "";
-  const story = cat.story ?? cat.translations?.[0]?.story ?? null;
-
-  // photos: junction rows look like { id, cats_id, directus_files_id: { id, ... } }
+function resolveCat(cat: any): CatResolved {
   const photos: DirectusFile[] = ((cat.photos as unknown[]) ?? [])
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((p: any) => {
-      // nested object from field selector
       if (p?.directus_files_id && typeof p.directus_files_id === "object") {
         return p.directus_files_id as DirectusFile;
       }
-      // flat file object
       if (p?.id) return p as DirectusFile;
       return null;
     })
     .filter(Boolean) as DirectusFile[];
 
-  // traits: junction rows look like { id, cats_id, cat_traits_id: { id, label, icon } }
   const traits = ((cat.traits as unknown[]) ?? [])
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((tr: any) => {
@@ -82,20 +60,18 @@ function resolveCat(cat: any, _locale: Locale): CatResolved {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .filter((t: any) => t.id);
 
-  // Auto-calculate age and category from date_of_birth
   const dob = cat.date_of_birth ?? null;
   const age = calcAge(dob);
 
   return {
     id: cat.id,
     slug: cat.slug,
-    name,
-    description,
-    story,
+    name: cat.name ?? cat.slug ?? "Nieznany",
+    description: cat.description ?? "",
+    story: cat.story ?? null,
     date_of_birth: dob,
     age_years: age.years,
     age_months: age.months,
-    // Use Directus category if set manually, otherwise derive from DOB
     gender: cat.gender ?? "unknown",
     status: cat.status ?? "available",
     category: (cat.category as "kitten" | "adult" | "senior") ?? age.category,
@@ -105,11 +81,7 @@ function resolveCat(cat: any, _locale: Locale): CatResolved {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function resolveArticle(article: any, _locale: Locale): NewsArticleResolved {
-  const title = article.title ?? article.translations?.[0]?.title ?? article.slug ?? "Untitled";
-  const body = article.body ?? article.translations?.[0]?.body ?? "";
-  const excerpt = article.excerpt ?? article.translations?.[0]?.excerpt ?? null;
-  // cover_image can be: null | UUID string | nested object {id, width, height, ...}
+function resolveArticle(article: any): NewsArticleResolved {
   let cover_image: DirectusFile | null = null;
   if (article.cover_image) {
     if (typeof article.cover_image === "string") {
@@ -123,24 +95,21 @@ function resolveArticle(article: any, _locale: Locale): NewsArticleResolved {
     slug: article.slug,
     published_at: article.published_at ?? new Date().toISOString(),
     cover_image,
-    title,
-    body,
-    excerpt,
+    title: article.title ?? article.slug ?? "Bez tytułu",
+    body: article.body ?? "",
+    excerpt: article.excerpt ?? null,
   };
 }
 
-// ─── Deep field selectors ────────────────────────────────────────────────────
+// ─── Field selectors ──────────────────────────────────────────────────────────
 
 const CAT_FIELDS = [
   "id", "slug", "gender", "status", "category",
-  "name", "description", "story",
-  "date_of_birth",           // replaces age_years/age_months
-  // Photos M2M via cats_files junction
+  "name", "description", "story", "date_of_birth",
   "photos.directus_files_id.id",
   "photos.directus_files_id.filename_download",
   "photos.directus_files_id.width",
   "photos.directus_files_id.height",
-  // Traits M2M via cats_traits junction
   "traits.cat_traits_id.id",
   "traits.cat_traits_id.label",
   "traits.cat_traits_id.icon",
@@ -149,7 +118,6 @@ const CAT_FIELDS = [
 const ARTICLE_FIELDS = [
   "id", "slug", "published_at",
   "title", "body", "excerpt",
-  // Nested cover_image object via relation
   "cover_image.id",
   "cover_image.width",
   "cover_image.height",
@@ -159,7 +127,6 @@ const ARTICLE_FIELDS = [
 // ─── Cats ─────────────────────────────────────────────────────────────────────
 
 export async function getCats(
-  locale: Locale,
   filters?: {
     category?: string;
     gender?: string;
@@ -169,7 +136,6 @@ export async function getCats(
 ): Promise<CatResolved[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const filter: any = {};
-
   if (filters?.category) filter.category = { _eq: filters.category };
   if (filters?.gender) filter.gender = { _eq: filters.gender };
   if (filters?.status) filter.status = { _eq: filters.status };
@@ -185,14 +151,10 @@ export async function getCats(
       limit: -1,
     })
   );
-
-  return (cats as unknown as Cat[]).map((c) => resolveCat(c, locale));
+  return (cats as unknown as Cat[]).map((c) => resolveCat(c));
 }
 
-export async function getCat(
-  slug: string,
-  locale: Locale
-): Promise<CatResolved | null> {
+export async function getCat(slug: string): Promise<CatResolved | null> {
   const cats = await directus.request(
     readItems("cats", {
       fields: CAT_FIELDS as unknown as string[],
@@ -200,18 +162,17 @@ export async function getCat(
       limit: 1,
     })
   );
-
   const cat = (cats as unknown as Cat[])[0];
-  return cat ? resolveCat(cat, locale) : null;
+  return cat ? resolveCat(cat) : null;
 }
 
-export async function getRandomCat(locale: Locale): Promise<CatResolved | null> {
-  const cats = await getCats(locale, { status: "available" });
+export async function getRandomCat(): Promise<CatResolved | null> {
+  const cats = await getCats({ status: "available" });
   if (!cats.length) return null;
   return cats[Math.floor(Math.random() * cats.length)];
 }
 
-export async function getAllTraits(locale: Locale) {
+export async function getAllTraits() {
   const traits = await directus.request(
     readItems("cat_traits", {
       fields: ["id", "icon", "label"],
@@ -221,17 +182,14 @@ export async function getAllTraits(locale: Locale) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (traits as any[]).map((t) => ({
     id: t.id,
-    label: t.label ?? t.icon ?? "Trait",
+    label: t.label ?? t.icon ?? "Cecha",
     icon: t.icon ?? null,
   }));
 }
 
 // ─── News ────────────────────────────────────────────────────────────────────
 
-export async function getArticles(
-  locale: Locale,
-  limit = 12
-): Promise<NewsArticleResolved[]> {
+export async function getArticles(limit = 12): Promise<NewsArticleResolved[]> {
   const articles = await directus.request(
     readItems("news", {
       fields: ARTICLE_FIELDS as unknown as string[],
@@ -239,13 +197,10 @@ export async function getArticles(
       limit,
     })
   );
-  return (articles as unknown as NewsArticle[]).map((a) => resolveArticle(a, locale));
+  return (articles as unknown as NewsArticle[]).map((a) => resolveArticle(a));
 }
 
-export async function getArticle(
-  slug: string,
-  locale: Locale
-): Promise<NewsArticleResolved | null> {
+export async function getArticle(slug: string): Promise<NewsArticleResolved | null> {
   const articles = await directus.request(
     readItems("news", {
       fields: ARTICLE_FIELDS as unknown as string[],
@@ -254,15 +209,12 @@ export async function getArticle(
     })
   );
   const article = (articles as unknown as NewsArticle[])[0];
-  return article ? resolveArticle(article, locale) : null;
+  return article ? resolveArticle(article) : null;
 }
 
 // ─── Pages ───────────────────────────────────────────────────────────────────
 
-export async function getPage(
-  slug: string,
-  _locale: Locale
-): Promise<{ title: string; content: string } | null> {
+export async function getPage(slug: string): Promise<{ title: string; content: string } | null> {
   try {
     const pages = await directus.request(
       readItems("pages", {
@@ -274,10 +226,7 @@ export async function getPage(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const page = (pages as any[])[0];
     if (!page) return null;
-    return {
-      title: page.title ?? slug,
-      content: page.content ?? "",
-    };
+    return { title: page.title ?? slug, content: page.content ?? "" };
   } catch {
     return null;
   }
@@ -285,7 +234,7 @@ export async function getPage(
 
 // ─── Documents ───────────────────────────────────────────────────────────────
 
-export async function getDocuments(_locale: Locale) {
+export async function getDocuments() {
   try {
     const docs = await directus.request(
       readItems("documents", {
@@ -297,7 +246,7 @@ export async function getDocuments(_locale: Locale) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (docs as any[]).map((d) => ({
       id: d.id,
-      name: d.name ?? d.file?.filename_download ?? "Document",
+      name: d.name ?? d.file?.filename_download ?? "Dokument",
       category: d.category ?? "other",
       file: d.file ?? { id: d.file, filename_download: "file", filesize: 0, type: "application/pdf" },
       downloadUrl: d.file?.id ? assetUrl(d.file.id) : "#",
@@ -317,7 +266,7 @@ export interface NavItem {
   children: NavItem[];
 }
 
-export async function getMenuItems(_locale: Locale): Promise<NavItem[]> {
+export async function getMenuItems(): Promise<NavItem[]> {
   try {
     const items = await directus.request(
       readItems("menu_items", {
@@ -326,10 +275,8 @@ export async function getMenuItems(_locale: Locale): Promise<NavItem[]> {
         limit: -1,
       })
     );
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const raw = items as any[];
-
     const map = new Map<string, NavItem & { parentId: string | null }>(
       raw.map((i) => [
         i.id,
@@ -343,7 +290,6 @@ export async function getMenuItems(_locale: Locale): Promise<NavItem[]> {
         },
       ])
     );
-
     const roots: NavItem[] = [];
     for (const item of map.values()) {
       if (item.parentId && map.has(item.parentId)) {
@@ -395,7 +341,6 @@ export async function getAdoptionQuestions(): Promise<AdoptionQuestion[]> {
 export async function getHomepageStats(catsAdoptedBeforeWebsite: number): Promise<{
   available: number;
   adopted: number;
-  foundedYear: number | null;
 }> {
   try {
     const [availableRes, adoptedRes] = await Promise.all([
@@ -414,13 +359,9 @@ export async function getHomepageStats(catsAdoptedBeforeWebsite: number): Promis
     const available = Number((availableRes as any[])[0]?.count?.id ?? 0);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const adoptedOnSite = Number((adoptedRes as any[])[0]?.count?.id ?? 0);
-    return {
-      available,
-      adopted: adoptedOnSite + catsAdoptedBeforeWebsite,
-      foundedYear: null, // passed separately from site settings
-    };
+    return { available, adopted: adoptedOnSite + catsAdoptedBeforeWebsite };
   } catch {
-    return { available: 0, adopted: catsAdoptedBeforeWebsite, foundedYear: null };
+    return { available: 0, adopted: catsAdoptedBeforeWebsite };
   }
 }
 
@@ -449,15 +390,6 @@ export interface SiteSettings {
   banner_enabled: boolean;
   banner_text: string | null;
   banner_color: string;
-}
-
-export interface SiteSettings {
-  site_name: string;
-  tagline: string | null;
-  logo: DirectusFile | null;
-  banner_enabled: boolean;
-  banner_text: string | null;
-  banner_color: string;
   banner_image: { id: string; width?: number; height?: number } | null;
   founded_year: number | null;
   cats_adopted_before_website: number;
@@ -465,7 +397,7 @@ export interface SiteSettings {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const defaults: SiteSettings = {
-    site_name: process.env.NEXT_PUBLIC_SITE_NAME ?? "Meow Haven",
+    site_name: process.env.NEXT_PUBLIC_SITE_NAME ?? "Ja Paczę Sercem",
     tagline: null,
     logo: null,
     banner_enabled: false,
@@ -487,14 +419,12 @@ export async function getSiteSettings(): Promise<SiteSettings> {
         limit: 1,
       })
     );
-    // Singleton returns object directly, list returns array — handle both
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const s = Array.isArray(result) ? (result as any[])[0] : result as any;
     if (!s) return defaults;
     return {
       site_name: s.site_name ?? defaults.site_name,
       tagline: s.tagline ?? null,
-      // logo can come back as UUID string or nested object
       logo: s.logo && typeof s.logo === "object" && s.logo.id ? s.logo
            : s.logo && typeof s.logo === "string" ? { id: s.logo } as DirectusFile
            : null,
@@ -515,7 +445,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   }
 }
 
-// ─── Age calculation from date_of_birth ──────────────────────────────────────
+// ─── Age calculation ──────────────────────────────────────────────────────────
 
 export function calcAge(dob: string | null): { years: number; months: number; category: "kitten" | "adult" | "senior" } {
   if (!dob) return { years: 0, months: 0, category: "adult" };

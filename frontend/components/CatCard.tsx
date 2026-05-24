@@ -2,27 +2,26 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import Link from "next/link";
 import { assetUrl } from "@/lib/directus";
 import { CatSlideout } from "./CatSlideout";
-import type { CatResolved, Locale } from "@/lib/types";
+import type { CatResolved } from "@/lib/types";
+
+const STATUS_LABELS = { available: "Dostępny", reserved: "Zarezerwowany", adopted: "Adoptowany" };
+const CATEGORY_LABELS = { kitten: "Kocię", adult: "Dorosły", senior: "Senior" };
+const GENDER_LABELS = { male: "Kocur", female: "Kotka", unknown: "Nieznana" };
 
 interface Props {
   cat: CatResolved;
-  locale: Locale;
 }
 
-export function CatCard({ cat, locale }: Props) {
+export function CatCard({ cat }: Props) {
   const [slideoutOpen, setSlideoutOpen] = useState(false);
-  const t = useTranslations("cats");
-
   const mainPhoto = cat.photos[0];
 
   return (
     <>
       <div className="card group cursor-pointer" onClick={() => setSlideoutOpen(true)}>
-        {/* Photo */}
         <div className="aspect-[4/3] relative bg-gray-100 overflow-hidden">
           {mainPhoto ? (
             <Image
@@ -35,36 +34,26 @@ export function CatCard({ cat, locale }: Props) {
           ) : (
             <div className="w-full h-full flex items-center justify-center text-6xl">🐱</div>
           )}
-
-          {/* Status badge overlay */}
           <div className="absolute top-3 right-3">
-            <span className={`badge-${cat.status} shadow-sm`}>
-              {t(`status_${cat.status}` as "status_available" | "status_reserved" | "status_adopted")}
-            </span>
+            <span className={`badge-${cat.status} shadow-sm`}>{STATUS_LABELS[cat.status]}</span>
           </div>
         </div>
 
-        {/* Info */}
         <div className="p-4">
           <div className="flex items-start justify-between mb-2">
             <h3 className="font-bold text-gray-900 text-lg leading-tight">{cat.name}</h3>
-            <span className="badge bg-brand-100 text-brand-800 ml-2 shrink-0">
-              {t(`category_${cat.category}` as "category_kitten" | "category_adult" | "category_senior")}
-            </span>
+            <span className="badge bg-brand-100 text-brand-800 ml-2 shrink-0">{CATEGORY_LABELS[cat.category]}</span>
           </div>
 
           <div className="flex flex-wrap gap-1.5 mb-3">
-            <span className="badge bg-purple-100 text-purple-700">
-              {t(`gender_${cat.gender}` as "gender_male" | "gender_female" | "gender_unknown")}
-            </span>
-            {cat.date_of_birth ? (
+            <span className="badge bg-purple-100 text-purple-700">{GENDER_LABELS[cat.gender]}</span>
+            {cat.date_of_birth && (
               <span className="badge bg-blue-100 text-blue-700">
-                {cat.age_years > 0 ? `${cat.age_years}y ` : ""}{cat.age_months}m
+                {cat.age_years > 0 ? `${cat.age_years}l. ` : ""}{cat.age_months}mies.
               </span>
-            ) : null}
+            )}
           </div>
 
-          {/* Traits */}
           {cat.traits.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-3">
               {cat.traits.slice(0, 3).map((trait) => (
@@ -73,9 +62,7 @@ export function CatCard({ cat, locale }: Props) {
                 </span>
               ))}
               {cat.traits.length > 3 && (
-                <span className="badge bg-gray-100 text-gray-500 text-xs">
-                  +{cat.traits.length - 3}
-                </span>
+                <span className="badge bg-gray-100 text-gray-500 text-xs">+{cat.traits.length - 3}</span>
               )}
             </div>
           )}
@@ -87,20 +74,20 @@ export function CatCard({ cat, locale }: Props) {
               className="flex-1 btn-secondary py-2 text-xs justify-center"
               onClick={(e) => { e.stopPropagation(); setSlideoutOpen(true); }}
             >
-              Quick View
+              Podgląd
             </button>
             <Link
-              href={`/cats/${cat.slug}`}
+              href={`/koty/${cat.slug}`}
               className="flex-1 btn-primary py-2 text-xs justify-center"
               onClick={(e) => e.stopPropagation()}
             >
-              {t("adopt_cta")}
+              Chcę adoptować
             </Link>
           </div>
         </div>
       </div>
 
-      <CatSlideout cat={cat} locale={locale} open={slideoutOpen} onClose={() => setSlideoutOpen(false)} />
+      <CatSlideout cat={cat} open={slideoutOpen} onClose={() => setSlideoutOpen(false)} />
     </>
   );
 }

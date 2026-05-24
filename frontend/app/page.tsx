@@ -1,22 +1,14 @@
-import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+export const dynamic = "force-dynamic";
+import Link from "next/link";
 import { getCats, getArticles, getHomepageStats, getSiteSettings } from "@/lib/directus";
 import { CatCard } from "@/components/CatCard";
 import { NewsCard } from "@/components/NewsCard";
 import { CatRandomizerButton } from "@/components/CatRandomizer";
-import type { Locale } from "@/lib/types";
 
-interface Props {
-  params: Promise<{ locale: Locale }>;
-}
-
-export default async function HomePage({ params }: Props) {
-  const { locale } = await params;
-  const t = await getTranslations("home");
-
+export default async function HomePage() {
   const [cats, articles, siteSettings] = await Promise.all([
-    getCats(locale, { status: "available" }),
-    getArticles(locale, 3),
+    getCats({ status: "available" }),
+    getArticles(3),
     getSiteSettings(),
   ]);
 
@@ -35,16 +27,16 @@ export default async function HomePage({ params }: Props) {
         </div>
         <div className="relative max-w-3xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 mb-6">
-            {t("hero_title")}
+            Daj kotu dom na zawsze
           </h1>
           <p className="text-xl text-gray-600 mb-10 max-w-xl mx-auto">
-            {t("hero_subtitle")}
+            Przeglądaj nasze koty szukające kochających rodzin i otwórz swoje serce już dziś.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/cats" className="btn-primary text-base px-8 py-4">
-              {t("cta_browse")}
+            <Link href="/koty" className="btn-primary text-base px-8 py-4">
+              Poznaj nasze koty
             </Link>
-            <CatRandomizerButton locale={locale} label={t("cta_randomize")} />
+            <CatRandomizerButton label="Zaskoczy mnie 🎲" />
           </div>
         </div>
       </section>
@@ -52,17 +44,17 @@ export default async function HomePage({ params }: Props) {
       {/* ── Featured Cats ── */}
       <section className="section">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">{t("featured_cats")}</h2>
-          <Link href="/cats" className="text-brand-600 hover:text-brand-700 font-medium text-sm">
-            {t("see_all_cats")} →
+          <h2 className="text-2xl font-bold text-gray-900">Wyróżnione koty</h2>
+          <Link href="/koty" className="text-brand-600 hover:text-brand-700 font-medium text-sm">
+            Wszystkie koty →
           </Link>
         </div>
         {featuredCats.length === 0 ? (
-          <p className="text-gray-500 text-center py-12">No cats available at the moment. Check back soon!</p>
+          <p className="text-gray-500 text-center py-12">Brak kotów w tej chwili. Sprawdź wkrótce!</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredCats.map((cat) => (
-              <CatCard key={cat.id} cat={cat} locale={locale} />
+              <CatCard key={cat.id} cat={cat} />
             ))}
           </div>
         )}
@@ -72,25 +64,17 @@ export default async function HomePage({ params }: Props) {
       <section className="bg-orange-500 py-12 px-4">
         <div className={`max-w-4xl mx-auto grid gap-8 text-center text-white ${yearsActive ? "grid-cols-3" : "grid-cols-2"}`}>
           <div>
-            {/* Available cats: precise number, no + */}
             <div className="text-4xl font-extrabold">{stats.available}</div>
-            <div className="text-orange-100 mt-1 text-sm">
-              {locale === "pl" ? "Kotów szuka domu" : "Cats looking for home"}
-            </div>
+            <div className="text-orange-100 mt-1 text-sm">Kotów szuka domu</div>
           </div>
           <div>
-            {/* Adopted: DB count + pre-website count, show + to indicate "at least" */}
             <div className="text-4xl font-extrabold">{stats.adopted}+</div>
-            <div className="text-orange-100 mt-1 text-sm">
-              {locale === "pl" ? "Kotów znalazło dom" : "Cats rehomed"}
-            </div>
+            <div className="text-orange-100 mt-1 text-sm">Kotów znalazło dom</div>
           </div>
           {yearsActive && (
             <div>
               <div className="text-4xl font-extrabold">{yearsActive}+</div>
-              <div className="text-orange-100 mt-1 text-sm">
-                {locale === "pl" ? "Lat działalności" : "Years of care"}
-              </div>
+              <div className="text-orange-100 mt-1 text-sm">Lat działalności</div>
             </div>
           )}
         </div>
@@ -100,14 +84,14 @@ export default async function HomePage({ params }: Props) {
       {articles.length > 0 && (
         <section className="section">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">{t("latest_news")}</h2>
-            <Link href="/news" className="text-brand-600 hover:text-brand-700 font-medium text-sm">
-              {t("see_all_news")} →
+            <h2 className="text-2xl font-bold text-gray-900">Ostatnie aktualności</h2>
+            <Link href="/aktualnosci" className="text-brand-600 hover:text-brand-700 font-medium text-sm">
+              Wszystkie aktualności →
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {articles.map((article) => (
-              <NewsCard key={article.id} article={article} locale={locale} />
+              <NewsCard key={article.id} article={article} />
             ))}
           </div>
         </section>

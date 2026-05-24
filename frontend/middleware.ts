@@ -1,11 +1,2 @@
-import createMiddleware from "next-intl/middleware";
-import { routing } from "./i18n/routing";
-
-export default createMiddleware(routing);
-
-export const config = {
-  matcher: [
-    // Match all paths except Next.js internals, static files, and API routes
-    "/((?!_next|_vercel|api|.*\\..*).*)",
-  ],
-};
+// No i18n middleware — Polish only, no locale prefix
+export {};

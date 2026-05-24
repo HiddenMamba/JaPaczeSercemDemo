@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import type { AdoptionQuestion } from "@/lib/directus";
-import type { Locale } from "@/lib/types";
 
 interface Props {
   questions: AdoptionQuestion[];
   catName: string | null;
   catSlug: string | null;
-  locale: Locale;
+  locale: string;
 }
 
 type Answers = Record<string, string | string[]>;
