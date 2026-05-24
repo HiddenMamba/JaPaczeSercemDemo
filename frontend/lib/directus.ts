@@ -29,7 +29,7 @@ export const directus = createDirectus(directusUrl)
   .with(rest());
 
 /** Build the public asset URL for a Directus file.
- *  When used with next/image, pass no params — Next.js handles resizing.
+ *  When used with next/image, pass no params - Next.js handles resizing.
  *  Params are only useful for raw <img> tags or direct downloads.
  */
 export function assetUrl(fileId: string, params?: Record<string, string>): string {

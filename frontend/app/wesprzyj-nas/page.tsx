@@ -21,7 +21,7 @@ export default async function WesprzyJNasPage() {
       <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Wesprzyj nas</h1>
       <p className="text-gray-500 mb-8">
         Twoja pomoc pozwala nam opiekować się kotami i znajdować im kochające domy.
-        Każde wsparcie — duże czy małe — ma ogromne znaczenie!
+        Każde wsparcie - duże czy małe - ma ogromne znaczenie!
       </p>
 
       {page?.content && (

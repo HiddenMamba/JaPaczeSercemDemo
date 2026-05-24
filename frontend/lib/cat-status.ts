@@ -1,4 +1,4 @@
-/** Cat adoption status — keep in sync with Directus `cats.status` choices. */
+/** Cat adoption status - keep in sync with Directus `cats.status` choices. */
 export const CAT_STATUSES = [
   "available",
   "inTreatment",

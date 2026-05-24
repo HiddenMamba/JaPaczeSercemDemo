@@ -1,11 +1,11 @@
 version: "3.8"
 
 # ── Local development: full stack on localhost ────────────────────────────────
-# Option A — with Next.js in Docker (full stack):
+# Option A - with Next.js in Docker (full stack):
 #   docker compose -f docker-compose.dev.yml up -d
 #   Open http://localhost:3000
 #
-# Option B — Next.js outside Docker (hot reload):
+# Option B - Next.js outside Docker (hot reload):
 #   docker compose -f docker-compose.dev.yml up -d postgres directus
 #   cp frontend/.env.example frontend/.env.local   # edit token if needed
 #   cd frontend && npm install && npm run dev

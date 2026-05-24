@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
       default: process.env.NEXT_PUBLIC_SITE_NAME ?? "Ja Pacze Sercem",
       template: `%s | ${process.env.NEXT_PUBLIC_SITE_NAME ?? "Ja Pacze Sercem"}`,
     },
-    description: "Fundacja adopcyjna — adoptuj kota i daj mu dom na zawsze.",
+    description: "Fundacja adopcyjna - adoptuj kota i daj mu dom na zawsze.",
     openGraph: {
       locale: "pl_PL",
       type: "website",

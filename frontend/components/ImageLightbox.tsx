@@ -136,7 +136,7 @@ export function ImageLightbox({ photos, alt, index, onIndexChange }: Props) {
   );
 }
 
-/** Clickable image area — opens lightbox without bubbling to parent handlers. */
+/** Clickable image area - opens lightbox without bubbling to parent handlers. */
 export function LightboxTrigger({
   children,
   onOpen,

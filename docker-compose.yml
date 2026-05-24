@@ -45,12 +45,12 @@ services:
       # Storage: local uploads (persisted via volume)
       STORAGE_LOCATIONS: local
       STORAGE_LOCAL_ROOT: /directus/uploads
-      # CORS — allow the frontend origin
+      # CORS - allow the frontend origin
       CORS_ENABLED: "true"
       CORS_ORIGIN: "https://${DOMAIN}"
     volumes:
       - directus_uploads:/directus/uploads
-    # Not exposed directly — Caddy proxies /cms/*
+    # Not exposed directly - Caddy proxies /cms/*
 
   # ── Next.js Frontend ─────────────────────────────────────────────────────────
   frontend:

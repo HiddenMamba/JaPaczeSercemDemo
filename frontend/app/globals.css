@@ -3,10 +3,10 @@
 
 /*
  * 60-30-10 palette (warm orange)
- * 60% — white / gray neutrals
- * 30% — brand-50…200 soft peach surfaces
- * 10% — brand-700 #eb5e28 accents (CTA, active chip, logo)
- * Footer — neutral-950 (dark grey/black), orange only on hover accents
+ * 60% - white / gray neutrals
+ * 30% - brand-50…200 soft peach surfaces
+ * 10% - brand-700 #eb5e28 accents (CTA, active chip, logo)
+ * Footer - neutral-950 (dark grey/black), orange only on hover accents
  */
 @theme {
   --color-brand-50:  #fff8f4;

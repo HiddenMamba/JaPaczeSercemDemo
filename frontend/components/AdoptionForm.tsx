@@ -154,7 +154,7 @@ export function AdoptionForm({ questions, catName, locale, socialLinks = [] }: P
   function generateText(): string {
     const lines: string[] = [];
     lines.push(catName
-      ? `FORMULARZ ADOPCYJNY — ${catName.toUpperCase()}`
+      ? `FORMULARZ ADOPCYJNY - ${catName.toUpperCase()}`
       : "FORMULARZ ADOPCYJNY");
     lines.push("=".repeat(40));
     lines.push("");
@@ -170,7 +170,7 @@ export function AdoptionForm({ questions, catName, locale, socialLinks = [] }: P
           ? (q.field_type === "radio"
               ? (q.options.find(o => o.value === ans)?.label ?? ans)
               : String(ans))
-          : "—";
+          : "-";
       lines.push(`${q.question}`);
       lines.push(`→ ${answerText}`);
       lines.push("");

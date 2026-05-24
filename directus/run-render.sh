@@ -2,7 +2,7 @@
 # ── Run Directus scripts interactively ───────────────────────────────────────
 # Usage: bash directus/run-render.sh
 
-echo "🐱 Ja Pacze Sercem — Directus Script Runner"
+echo "🐱 Ja Pacze Sercem - Directus Script Runner"
 echo ""
 
 read -p "Directus URL [https://ja-pacze-sercem-cms.onrender.com]: " URL
@@ -18,9 +18,9 @@ export DIRECTUS_PASSWORD="$PASSWORD"
 
 echo ""
 echo "Which script to run?"
-echo "  1) seed.sh            — full seed (cats, news, pages, menu, social, questions)"
-echo "  2) patch-labels.sh    — Polish field labels + admin language only"
-echo "  3) patch-cat-status.sh — add inTreatment status to cats dropdown"
+echo "  1) seed.sh            - full seed (cats, news, pages, menu, social, questions)"
+echo "  2) patch-labels.sh    - Polish field labels + admin language only"
+echo "  3) patch-cat-status.sh - add inTreatment status to cats dropdown"
 echo ""
 read -p "Choose [1/2/3]: " CHOICE
 

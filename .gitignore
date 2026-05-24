@@ -16,7 +16,7 @@ frontend/.env.local
 frontend/.env.production.local
 
 # Production env template (safe to commit)
-# .env.example — intentionally tracked
+# .env.example - intentionally tracked
 
 # Docker volumes / local data
 postgres_data/

@@ -1,8 +1,8 @@
-# 🐱 Ja Paczę Sercem — Strona Adopcyjna
+# 🐱 Ja Paczę Sercem - Strona Adopcyjna
 
 Strona internetowa fundacji adopcyjnej zbudowana na **Next.js 15** + **Directus CMS** + **PostgreSQL**.
 
-- Zarządzanie treścią bez kodu — przez panel admina Directus
+- Zarządzanie treścią bez kodu - przez panel admina Directus
 - Przeglądarka kotów z filtrami (status, wiek, płeć, cechy)
 - Formularz adopcyjny generujący gotową wiadomość
 - Aktualności, partnerzy, sposoby wsparcia
@@ -33,7 +33,7 @@ cat-adoption/
 
 ---
 
-## 🚀 CZĘŚĆ 1 — Setup od zera (Demo online, BEZPŁATNE)
+## 🚀 CZĘŚĆ 1 - Setup od zera (Demo online, BEZPŁATNE)
 
 ### Wymagania
 - Konto GitHub
@@ -42,15 +42,15 @@ cat-adoption/
 
 ---
 
-### Krok 1 — Render: PostgreSQL
+### Krok 1 - Render: PostgreSQL
 
 1. Render → **New → PostgreSQL**
 2. Nazwa: `cat-adoption-db`, Plan: **Free**
-3. Skopiuj **Internal Database URL** — potrzebny w kroku 2
+3. Skopiuj **Internal Database URL** - potrzebny w kroku 2
 
 ---
 
-### Krok 2 — Render: Directus CMS
+### Krok 2 - Render: Directus CMS
 
 1. Render → **New → Web Service**
 2. Docker image: `directus/directus:11`
@@ -76,7 +76,7 @@ cat-adoption/
 
 ---
 
-### Krok 3 — Import schematu bazy danych
+### Krok 3 - Import schematu bazy danych
 
 Po uruchomieniu Directus, zaaplikuj schemat przez API:
 
@@ -105,13 +105,13 @@ curl -X POST "https://twoj-cms.onrender.com/schema/apply?force=true" \
 
 ---
 
-### Krok 4 — Seedowanie danych
+### Krok 4 - Seedowanie danych
 
 ```bash
 # Uruchom interaktywny runner
 bash directus/run-render.sh
 # Wpisz URL, email i hasło Directus
-# Wybierz: 1 (seed) — wypełni bazę przykładowymi danymi
+# Wybierz: 1 (seed) - wypełni bazę przykładowymi danymi
 ```
 
 Seed tworzy:
@@ -126,7 +126,7 @@ Seed tworzy:
 
 ---
 
-### Krok 5 — Polskie etykiety pól w Directus
+### Krok 5 - Polskie etykiety pól w Directus
 
 ```bash
 bash directus/run-render.sh
@@ -135,7 +135,7 @@ bash directus/run-render.sh
 
 ---
 
-### Krok 6 — Uprawnienia publiczne w Directus
+### Krok 6 - Uprawnienia publiczne w Directus
 
 W panelu admina Directus:
 1. **Settings → Access Policies → Public**
@@ -149,7 +149,7 @@ W panelu admina Directus:
 
 ---
 
-### Krok 7 — Vercel (frontend)
+### Krok 7 - Vercel (frontend)
 
 1. Vercel → **Add New → Project** → importuj repo z GitHub
 2. Framework: **Next.js**
@@ -164,14 +164,14 @@ W panelu admina Directus:
 | `NEXT_PUBLIC_DIRECTUS_URL` | `https://twoj-cms.onrender.com` |
 | `NEXT_PUBLIC_SITE_URL` | `https://twoja-domena.vercel.app` |
 | `NEXT_PUBLIC_SITE_NAME` | `Ja Paczę Sercem` |
-| `RESEND_API_KEY` | klucz z resend.com (opcjonalny — do formularza kontaktowego) |
+| `RESEND_API_KEY` | klucz z resend.com (opcjonalny - do formularza kontaktowego) |
 | `CONTACT_EMAIL` | email do odbierania wiadomości |
 
-5. **Deploy** — strona będzie dostępna pod adresem Vercel
+5. **Deploy** - strona będzie dostępna pod adresem Vercel
 
 ---
 
-### Krok 8 — UptimeRobot (zapobieganie uśpieniu Render)
+### Krok 8 - UptimeRobot (zapobieganie uśpieniu Render)
 
 Render usypia bezpłatne usługi po 15 min braku ruchu.
 
@@ -182,20 +182,20 @@ Render usypia bezpłatne usługi po 15 min braku ruchu.
 
 ---
 
-## 🖥️ CZĘŚĆ 2 — Serwer produkcyjny (VPS)
+## 🖥️ CZĘŚĆ 2 - Serwer produkcyjny (VPS)
 
 ### Wymagania
 - Serwer Ubuntu 22.04+ z min. 2GB RAM
 - Domena z dostępem do DNS
 
-### Krok 1 — Przygotowanie serwera
+### Krok 1 - Przygotowanie serwera
 
 ```bash
 apt update && apt upgrade -y
 apt install -y docker.io docker-compose-plugin git
 ```
 
-### Krok 2 — Konfiguracja środowiska
+### Krok 2 - Konfiguracja środowiska
 
 ```bash
 git clone https://github.com/HiddenMamba/JaPaczeSercemDemo.git
@@ -204,17 +204,17 @@ cp .env.prod.example .env
 nano .env  # Wypełnij wszystkie zmienne
 ```
 
-### Krok 3 — DNS
+### Krok 3 - DNS
 
 Ustaw rekord A dla domeny na IP serwera. Caddy automatycznie pobierze certyfikat SSL.
 
-### Krok 4 — Uruchomienie
+### Krok 4 - Uruchomienie
 
 ```bash
 docker compose up -d
 ```
 
-### Krok 5 — Import schematu i seedowanie
+### Krok 5 - Import schematu i seedowanie
 
 ```bash
 # Poczekaj ~60s na uruchomienie Directus, potem:
@@ -246,7 +246,7 @@ docker compose -f docker-compose.dev.yml up -d postgres directus
 
 # 2. Skonfiguruj frontend
 cp frontend/.env.example frontend/.env.local
-# Edytuj frontend/.env.local — dodaj DIRECTUS_TOKEN z panelu admina
+# Edytuj frontend/.env.local - dodaj DIRECTUS_TOKEN z panelu admina
 
 # 3. Uruchom frontend
 cd frontend && npm install && npm run dev
@@ -292,7 +292,7 @@ bash directus/seed.sh
 
 ### Zarządzanie banerem
 1. **Ustawienia strony** → `banner_enabled = true`
-2. Wpisz `banner_text` — pojawi się na górze strony
+2. Wpisz `banner_text` - pojawi się na górze strony
 
 ### Formularz adopcyjny
 1. **Pytania adopcyjne** → dodaj/edytuj/ukryj pytania

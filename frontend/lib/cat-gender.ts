@@ -1,4 +1,4 @@
-/** Cat gender — keep in sync with Directus `cats.gender` choices. */
+/** Cat gender - keep in sync with Directus `cats.gender` choices. */
 export const CAT_GENDERS = ["male", "female", "unknown"] as const;
 
 export type CatGender = (typeof CAT_GENDERS)[number];

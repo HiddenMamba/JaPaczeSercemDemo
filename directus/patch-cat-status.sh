@@ -15,7 +15,7 @@ DIRECTUS_EMAIL=${DIRECTUS_EMAIL:-admin@example.com}
 DIRECTUS_PASSWORD=${DIRECTUS_PASSWORD:-admin123}
 
 echo ""
-echo "🐱 Patch cats.status — add inTreatment"
+echo "🐱 Patch cats.status - add inTreatment"
 echo "   Target: $DIRECTUS_URL"
 echo ""
 

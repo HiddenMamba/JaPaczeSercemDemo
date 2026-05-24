@@ -20,7 +20,7 @@ DIRECTUS_EMAIL=${DIRECTUS_EMAIL:-admin@example.com}
 DIRECTUS_PASSWORD=${DIRECTUS_PASSWORD:-admin123}
 
 echo ""
-echo "🐱 Ja Pacze Sercem — Directus Seed Script"
+echo "🐱 Ja Pacze Sercem - Directus Seed Script"
 echo "   Target: $DIRECTUS_URL"
 echo ""
 
@@ -72,11 +72,11 @@ post_if_empty() {
   if [ "$COUNT" = "0" ] || [ -z "$COUNT" ]; then
     post "$COLLECTION" "$DATA"
   else
-    echo "   ~ $COLLECTION (skipped — already has data)"
+    echo "   ~ $COLLECTION (skipped - already has data)"
   fi
 }
 
-# Helper: PATCH singleton (upsert — tries PATCH first, falls back to POST)
+# Helper: PATCH singleton (upsert - tries PATCH first, falls back to POST)
 patch_singleton() {
   COLLECTION=$1
   DATA=$2
@@ -186,7 +186,7 @@ post_if_empty news '{
   "slug": "historia-sukcesu-luna",
   "title": "Historia sukcesu: Luna znalazla dom!",
   "published_at": "2024-03-10T10:00:00Z",
-  "body": "<p>Z wielka radoscia informujemy, ze Luna — nasza lagodna szara kotka — znalazla wymarzony dom! Nowa rodzina zakochala sie w niej od pierwszego wejrzenia.</p><p>Luna spedzila z nami 3 miesiace. Byla nieśmiala i potrzebowala czasu, zeby zaufac ludziom. Dzieki cierpliwosci i milosci wolontariuszy stala sie towarzyska i kochajaca kotka.</p><p>Dziekujemy rodzinie Kowalskich za otwarcie serca i domu dla Luny! To wlasnie takie chwile przypominaja nam, dlaczego robimy to co robimy.</p>",
+  "body": "<p>Z wielka radoscia informujemy, ze Luna - nasza lagodna szara kotka - znalazla wymarzony dom! Nowa rodzina zakochala sie w niej od pierwszego wejrzenia.</p><p>Luna spedzila z nami 3 miesiace. Byla nieśmiala i potrzebowala czasu, zeby zaufac ludziom. Dzieki cierpliwosci i milosci wolontariuszy stala sie towarzyska i kochajaca kotka.</p><p>Dziekujemy rodzinie Kowalskich za otwarcie serca i domu dla Luny! To wlasnie takie chwile przypominaja nam, dlaczego robimy to co robimy.</p>",
   "excerpt": "Luna, nasza lagodna szara kotka, znalazla wymarzony dom. Poznaj jej wzruszajaca historie."
 }'
 
@@ -195,7 +195,7 @@ echo ""
 echo "=== Support Methods ==="
 post_if_empty support_methods '{"title":"Przelew bankowy","type":"account","icon":"🏦","order":1,"active":true,"description":"<p>Mozesz wesprzec nas przelewem na konto fundacji:</p><p><strong>Nr konta:</strong> XX XXXX XXXX XXXX XXXX XXXX XXXX</p><p><strong>Tytul:</strong> Darowizna dla fundacji Ja Pacze Sercem</p>","url":null,"button_label":null}'
 post_if_empty support_methods '{"title":"Zrzutka online","type":"crowdfunding","icon":"❤️","order":2,"active":true,"description":"<p>Wesprzyj nas przez platforme Zrzutka.pl - szybko i bezpiecznie.</p>","url":"https://zrzutka.pl","button_label":"Wesprzyj na Zrzutka.pl"}'
-post_if_empty support_methods '{"title":"Darowizna rzeczowa","type":"info","icon":"🎁","order":3,"active":true,"description":"<p>Potrzebujemy rowniez wsparcia rzeczowego:</p><ul><li>Karma dla kotow (sucha i mokra)</li><li>Zewirek/piasek do kuwety</li><li>Zabawki i drapalki</li><li>Koce i posciela</li></ul><p>Skonktaktuj sie z nami, aby umowic przekazanie darowizny.</p>","url":null,"button_label":null}'
+post_if_empty support_methods '{"title":"Darowizna rzeczowa","type":"info","icon":"🎁","order":3,"active":true,"description":"<p>Potrzebujemy rowniez wsparcia rzeczowego:</p><ul><li>Karma dla kotow (sucha i mokra)</li><li>Żwirek/piasek do kuwety</li><li>Zabawki i drapalki</li><li>Koce i pościel</li></ul><p>Skonktaktuj sie z nami, aby umowic przekazanie darowizny.</p>","url":null,"button_label":null}'
 post_if_empty support_methods '{"title":"Wolontariat","type":"info","icon":"🤝","order":4,"active":true,"description":"<p>Szukamy wolontariuszy, ktorzy moga pomoc w:</p><ul><li>Opiece nad kotami w domu tymczasowym</li><li>Transportach do weterynarza</li><li>Promowaniu kotow w mediach spolecznosciowych</li><li>Organizacji wydarzen adopcyjnych</li></ul>","url":null,"button_label":null}'
 
 # ── Demo Cats ─────────────────────────────────────────────────────────────────
@@ -268,7 +268,7 @@ post_if_empty cats '{
   "gender": "female",
   "category": "kitten",
   "date_of_birth": "2025-02-20",
-  "description": "Czesia to mala odkrywczyni — bada kazdy kat mieszkania z niesamowitym entuzjazmem. Szuka aktywnej rodziny.",
+  "description": "Czesia to mala odkrywczyni - bada kazdy kat mieszkania z niesamowitym entuzjazmem. Szuka aktywnej rodziny.",
   "story": null
 }'
 
