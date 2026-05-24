@@ -1,6 +1,7 @@
 {
   "version": 1,
-  "directus": "11.0.0",
+  "directus": "11.17.4",
+  "vendor": "postgres",
   "collections": [
     {
       "collection": "cat_traits",
