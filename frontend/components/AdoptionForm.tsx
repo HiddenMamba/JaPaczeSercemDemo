@@ -223,7 +223,7 @@ export function AdoptionForm({ questions, catName, locale, socialLinks = [] }: P
 
         {/* Social links */}
         {socialLinks.length > 0 && (
-          <div className="bg-orange-50 border border-orange-100 rounded-xl p-5 mb-6">
+          <div className="bg-brand-50 border border-brand-100 rounded-xl p-5 mb-6">
             <p className="font-semibold text-gray-800 mb-3">Wyślij wiadomość przez media społecznościowe:</p>
             <div className="flex flex-wrap gap-3">
               {socialLinks.map((link) => (
@@ -259,7 +259,7 @@ export function AdoptionForm({ questions, catName, locale, socialLinks = [] }: P
   return (
     <form onSubmit={handleSubmit} className="space-y-6" noValidate>
       {catName && (
-        <div className="bg-brand-50 border border-brand-100 rounded-xl px-4 py-3 text-sm text-brand-700 font-medium">
+        <div className="bg-brand-50 border border-brand-100 rounded-xl px-4 py-3 text-sm text-brand-800 font-medium">
           🐱 Formularz dla: <strong>{catName}</strong>
         </div>
       )}
@@ -268,7 +268,7 @@ export function AdoptionForm({ questions, catName, locale, socialLinks = [] }: P
         <div key={q.id}>
           <label className="block text-sm font-semibold text-gray-800 mb-2">
             {q.question}
-            {q.required && <span className="text-orange-500 ml-1">*</span>}
+            {q.required && <span className="text-brand-700 ml-1">*</span>}
           </label>
 
           {q.field_type === "text" && (
@@ -301,7 +301,7 @@ export function AdoptionForm({ questions, catName, locale, socialLinks = [] }: P
                     value={opt.value}
                     checked={answers[q.id] === opt.value}
                     onChange={() => setAnswer(q.id, opt.value)}
-                    className="accent-orange-500 w-4 h-4 shrink-0"
+                    className="accent-brand-700 w-4 h-4 shrink-0"
                   />
                   <span className="text-sm text-gray-700 group-hover:text-gray-900">{opt.label}</span>
                 </label>
@@ -320,8 +320,8 @@ export function AdoptionForm({ questions, catName, locale, socialLinks = [] }: P
                     onClick={() => toggleMulti(q.id, opt.value)}
                     className={`badge cursor-pointer border transition ${
                       selected
-                        ? "bg-orange-500 text-white border-orange-500"
-                        : "bg-white text-gray-600 border-gray-200 hover:border-orange-300"
+                        ? "bg-brand-700 text-white border-brand-700"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-brand-200"
                     }`}
                   >
                     {selected ? "✓ " : ""}{opt.label}

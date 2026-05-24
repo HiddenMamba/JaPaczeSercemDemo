@@ -29,7 +29,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero ── */}
-      <section className="relative bg-gradient-to-br from-brand-50 to-orange-50 py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-brand-50 via-white to-brand-50 py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 opacity-5 pointer-events-none select-none text-[20rem] leading-none text-center">
           🐱
         </div>
@@ -53,7 +53,7 @@ export default async function HomePage() {
       <section className="section">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-bold text-gray-900">Wyróżnione koty</h2>
-          <Link href="/koty" className="text-brand-600 hover:text-brand-700 font-medium text-sm">
+          <Link href="/koty" className="link-accent text-sm">
             Wszystkie koty →
           </Link>
         </div>
@@ -69,20 +69,20 @@ export default async function HomePage() {
       </section>
 
       {/* ── Stats Banner ── */}
-      <section className="bg-orange-500 py-12 px-4">
-        <div className={`max-w-4xl mx-auto grid gap-8 text-center text-white ${yearsActive ? "grid-cols-3" : "grid-cols-2"}`}>
+      <section className="bg-brand-50 border-y border-brand-100 py-12 px-4">
+        <div className={`max-w-4xl mx-auto grid gap-8 text-center ${yearsActive ? "grid-cols-3" : "grid-cols-2"}`}>
           <div>
-            <div className="text-4xl font-extrabold">{stats.available}</div>
-            <div className="text-orange-100 mt-1 text-sm">Kotów szuka domu</div>
+            <div className="text-4xl font-extrabold text-brand-700">{stats.available}</div>
+            <div className="text-gray-600 mt-1 text-sm">Kotów szuka domu</div>
           </div>
           <div>
-            <div className="text-4xl font-extrabold">{stats.adopted}+</div>
-            <div className="text-orange-100 mt-1 text-sm">Kotów znalazło dom</div>
+            <div className="text-4xl font-extrabold text-brand-700">{stats.adopted}+</div>
+            <div className="text-gray-600 mt-1 text-sm">Kotów znalazło dom</div>
           </div>
           {yearsActive && (
             <div>
-              <div className="text-4xl font-extrabold">{yearsActive}+</div>
-              <div className="text-orange-100 mt-1 text-sm">Lat działalności</div>
+              <div className="text-4xl font-extrabold text-brand-700">{yearsActive}+</div>
+              <div className="text-gray-600 mt-1 text-sm">Lat działalności</div>
             </div>
           )}
         </div>
@@ -93,7 +93,7 @@ export default async function HomePage() {
         <section className="section">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold text-gray-900">Ostatnie aktualności</h2>
-            <Link href="/aktualnosci" className="text-brand-600 hover:text-brand-700 font-medium text-sm">
+            <Link href="/aktualnosci" className="link-accent text-sm">
               Wszystkie aktualności →
             </Link>
           </div>

@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { assetUrl } from "@/lib/directus";
+import { ImageLightbox, LightboxTrigger } from "./ImageLightbox";
 import type { CatResolved } from "@/lib/types";
 
 const STATUS_LABELS = { available: "Dostępny", reserved: "Zarezerwowany", adopted: "Adoptowany", rainbow: "🌈 Za tęczowym mostem" };
@@ -18,6 +19,12 @@ interface Props {
 }
 
 export function CatSlideout({ cat, open, onClose }: Props) {
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!open) setLightboxIndex(null);
+  }, [open]);
+
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -56,11 +63,13 @@ export function CatSlideout({ cat, open, onClose }: Props) {
 
             <div className="aspect-[4/3] relative bg-gray-100 shrink-0">
               {mainPhoto ? (
-                <Image src={assetUrl(mainPhoto.id)} alt={cat.name} fill className="object-cover" />
+                <LightboxTrigger onOpen={() => setLightboxIndex(0)} className="absolute inset-0">
+                  <Image src={assetUrl(mainPhoto.id)} alt={cat.name} fill className="object-cover" sizes="448px" />
+                </LightboxTrigger>
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-8xl">🐱</div>
               )}
-              <div className="absolute top-3 right-3">
+              <div className="absolute top-3 right-3 pointer-events-none">
                 <span className={`badge-${cat.status} shadow`}>{STATUS_LABELS[cat.status]}</span>
               </div>
             </div>
@@ -81,7 +90,7 @@ export function CatSlideout({ cat, open, onClose }: Props) {
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Cechy szczególne</p>
                   <div className="flex flex-wrap gap-1.5">
                     {cat.traits.map((trait) => (
-                      <span key={trait.id} className="badge bg-orange-100 text-orange-800">{trait.icon} {trait.label}</span>
+                      <span key={trait.id} className="badge bg-rose-100 text-rose-800">{trait.icon} {trait.label}</span>
                     ))}
                   </div>
                 </div>
@@ -97,9 +106,11 @@ export function CatSlideout({ cat, open, onClose }: Props) {
 
               {cat.photos.length > 1 && (
                 <div className="grid grid-cols-4 gap-2 mb-6">
-                  {cat.photos.slice(0, 4).map((photo) => (
+                  {cat.photos.slice(1, 5).map((photo, i) => (
                     <div key={photo.id} className="aspect-square relative rounded-lg overflow-hidden bg-gray-100">
-                      <Image src={assetUrl(photo.id)} alt={cat.name} fill className="object-cover" />
+                      <LightboxTrigger onOpen={() => setLightboxIndex(i + 1)} className="absolute inset-0">
+                        <Image src={assetUrl(photo.id)} alt={cat.name} fill className="object-cover" sizes="100px" />
+                      </LightboxTrigger>
                     </div>
                   ))}
                 </div>
@@ -117,6 +128,13 @@ export function CatSlideout({ cat, open, onClose }: Props) {
               </div>
             </div>
           </motion.div>
+
+          <ImageLightbox
+            photos={cat.photos}
+            alt={cat.name}
+            index={lightboxIndex}
+            onIndexChange={setLightboxIndex}
+          />
         </>
       )}
     </AnimatePresence>

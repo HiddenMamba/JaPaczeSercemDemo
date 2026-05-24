@@ -35,7 +35,7 @@ export default async function ArticlePage({ params }: Props) {
 
   return (
     <article className="section max-w-3xl mx-auto">
-      <Link href="/aktualnosci" className="text-brand-600 hover:text-brand-700 text-sm font-medium mb-6 inline-block">
+      <Link href="/aktualnosci" className="link-accent text-sm mb-6 inline-block">
         ← Wszystkie aktualności
       </Link>
 

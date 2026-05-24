@@ -59,7 +59,7 @@ export function DocumentList({ documents }: Props) {
                   {FILE_ICON[doc.file.type] ?? FILE_ICON.default}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 group-hover:text-brand-700 truncate">
+                  <p className="font-medium text-gray-900 group-hover:text-brand-800 truncate">
                     {doc.name}
                   </p>
                   <p className="text-xs text-gray-400">{formatSize(doc.file.filesize)}</p>

@@ -1,12 +1,24 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/*
+ * 60-30-10 palette (warm orange)
+ * 60% — white / gray neutrals
+ * 30% — brand-50…200 soft peach surfaces
+ * 10% — brand-700 #eb5e28 accents (CTA, active chip, logo)
+ * Footer — neutral-950 (dark grey/black), orange only on hover accents
+ */
 @theme {
-  --color-brand-50:  #fff7ed;
-  --color-brand-100: #ffedd5;
-  --color-brand-500: #f97316;
-  --color-brand-600: #ea580c;
-  --color-brand-700: #c2410c;
+  --color-brand-50:  #fff8f4;
+  --color-brand-100: #fdecd8;
+  --color-brand-200: #f5d4b8;
+  --color-brand-300: #e8b896;
+  --color-brand-400: #e89462;
+  --color-brand-500: #eb5e28;
+  --color-brand-600: #c85a28;
+  --color-brand-700: #eb5e28;
+  --color-brand-800: #c44e20;
+  --color-brand-900: #9a3d18;
 }
 
 @layer base {
@@ -20,12 +32,11 @@
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center gap-2 rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 disabled:opacity-50 disabled:cursor-not-allowed;
   }
   .btn-secondary {
     @apply inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50;
   }
-  /* Tailwind v4: badge variants must be fully inlined — no @apply chaining */
   .badge {
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
@@ -45,9 +56,12 @@
     @apply py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto;
   }
   .prose-content {
-    @apply prose prose-gray max-w-none prose-a:text-orange-600;
+    @apply prose prose-gray max-w-none prose-a:text-brand-600 prose-a:no-underline hover:prose-a:text-brand-700 hover:prose-a:underline;
   }
   .input {
-    @apply w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white;
+    @apply w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300 bg-white;
+  }
+  .link-accent {
+    @apply text-brand-600 font-medium transition hover:text-brand-700;
   }
 }

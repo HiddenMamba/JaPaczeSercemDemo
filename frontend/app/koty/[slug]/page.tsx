@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import { getCats, getCat, assetUrl } from "@/lib/directus";
+import { getCats, getCat } from "@/lib/directus";
+import { CatPhotoGallery } from "@/components/CatPhotoGallery";
 
 export const dynamicParams = true;
 
@@ -29,10 +29,9 @@ export default async function CatPage({ params }: Props) {
   const cat = await getCat(slug);
   if (!cat) notFound();
 
-  const mainPhoto = cat.photos[0];
-
   const STATUS_LABELS = {
     available: "Dostępny",
+    inTreatment: "W trakcie leczenia",
     reserved: "Zarezerwowany",
     adopted: "Adoptowany",
     rainbow: "🌈 Za tęczowym mostem",
@@ -50,41 +49,12 @@ export default async function CatPage({ params }: Props) {
 
   return (
     <div className="section max-w-4xl mx-auto">
-      <Link href="/koty" className="text-brand-600 hover:text-brand-700 text-sm font-medium mb-6 inline-block">
+      <Link href="/koty" className="link-accent text-sm mb-6 inline-block">
         ← Powrót do listy
       </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        {/* Photos */}
-        <div>
-          <div className="aspect-[4/3] relative bg-gray-100 rounded-2xl overflow-hidden mb-3">
-            {mainPhoto ? (
-              <Image
-                src={assetUrl(mainPhoto.id)}
-                alt={cat.name}
-                fill
-                className="object-cover"
-                priority
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-8xl">🐱</div>
-            )}
-          </div>
-          {cat.photos.length > 1 && (
-            <div className="grid grid-cols-4 gap-2">
-              {cat.photos.slice(1, 5).map((photo) => (
-                <div key={photo.id} className="aspect-square relative rounded-lg overflow-hidden bg-gray-100">
-                  <Image
-                    src={assetUrl(photo.id)}
-                    alt={cat.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <CatPhotoGallery photos={cat.photos} name={cat.name} />
 
         {/* Info */}
         <div>
@@ -108,7 +78,7 @@ export default async function CatPage({ params }: Props) {
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Cechy szczególne</p>
               <div className="flex flex-wrap gap-1.5">
                 {cat.traits.map((trait) => (
-                  <span key={trait.id} className="badge bg-orange-100 text-orange-700">
+                  <span key={trait.id} className="badge bg-rose-100 text-rose-800">
                     {trait.icon} {trait.label}
                   </span>
                 ))}

@@ -40,7 +40,7 @@ export function Navbar({ menuItems, siteName, logoUrl }: Props) {
           ) : (
             <span className="text-2xl">🐱</span>
           )}
-          <span className="text-orange-600">{siteName}</span>
+          <span className="text-brand-700">{siteName}</span>
         </Link>
 
         {/* Desktop nav */}
@@ -53,7 +53,7 @@ export function Navbar({ menuItems, siteName, logoUrl }: Props) {
                   href={item.url}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition ${
                     isActive
-                      ? "bg-brand-50 text-brand-700"
+                      ? "bg-brand-100 text-brand-800"
                       : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                   }`}
                 >
@@ -92,7 +92,7 @@ export function Navbar({ menuItems, siteName, logoUrl }: Props) {
             <Link
               key={item.id}
               href={item.url}
-              className="block px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-brand-50 hover:text-brand-700"
+              className="block px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-brand-50 hover:text-brand-800"
               onClick={() => setMobileOpen(false)}
             >
               {item.label}

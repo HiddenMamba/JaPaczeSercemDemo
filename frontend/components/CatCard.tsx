@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { assetUrl } from "@/lib/directus";
 import { CatSlideout } from "./CatSlideout";
+import { ImageLightbox, LightboxTrigger } from "./ImageLightbox";
 import type { CatResolved } from "@/lib/types";
 
 const STATUS_LABELS = { available: "Dostępny", reserved: "Zarezerwowany", adopted: "Adoptowany", rainbow: "🌈 Za tęczowym mostem" };
@@ -17,6 +18,7 @@ interface Props {
 
 export function CatCard({ cat }: Props) {
   const [slideoutOpen, setSlideoutOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const mainPhoto = cat.photos[0];
 
   return (
@@ -24,17 +26,19 @@ export function CatCard({ cat }: Props) {
       <div className="card group cursor-pointer" onClick={() => setSlideoutOpen(true)}>
         <div className="aspect-[4/3] relative bg-gray-100 overflow-hidden">
           {mainPhoto ? (
-            <Image
-              src={assetUrl(mainPhoto.id)}
-              alt={cat.name}
-              fill
-              className="object-cover transition duration-300 group-hover:scale-105"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            />
+            <LightboxTrigger onOpen={() => setLightboxIndex(0)} className="absolute inset-0">
+              <Image
+                src={assetUrl(mainPhoto.id)}
+                alt={cat.name}
+                fill
+                className="object-cover transition duration-300 group-hover:scale-105"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              />
+            </LightboxTrigger>
           ) : (
             <div className="w-full h-full flex items-center justify-center text-6xl">🐱</div>
           )}
-          <div className="absolute top-3 right-3">
+          <div className="absolute top-3 right-3 pointer-events-none">
             <span className={`badge-${cat.status} shadow-sm`}>{STATUS_LABELS[cat.status]}</span>
           </div>
         </div>
@@ -57,7 +61,7 @@ export function CatCard({ cat }: Props) {
           {cat.traits.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-3">
               {cat.traits.slice(0, 3).map((trait) => (
-                <span key={trait.id} className="badge bg-orange-100 text-orange-700 text-xs">
+                <span key={trait.id} className="badge bg-rose-100 text-rose-800 text-xs">
                   {trait.icon} {trait.label}
                 </span>
               ))}
@@ -88,6 +92,13 @@ export function CatCard({ cat }: Props) {
       </div>
 
       <CatSlideout cat={cat} open={slideoutOpen} onClose={() => setSlideoutOpen(false)} />
+
+      <ImageLightbox
+        photos={cat.photos}
+        alt={cat.name}
+        index={lightboxIndex}
+        onIndexChange={setLightboxIndex}
+      />
     </>
   );
 }

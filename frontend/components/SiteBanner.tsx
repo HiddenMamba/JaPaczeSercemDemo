@@ -5,8 +5,8 @@ import Image from "next/image";
 import type { SiteSettings } from "@/lib/directus";
 
 const BG_COLORS: Record<string, string> = {
-  orange: "bg-orange-500 text-white",
-  red:    "bg-red-500 text-white",
+  orange: "bg-brand-700 text-white",
+  red:    "bg-brand-700 text-white",
   green:  "bg-green-600 text-white",
   blue:   "bg-blue-600 text-white",
   purple: "bg-purple-600 text-white",

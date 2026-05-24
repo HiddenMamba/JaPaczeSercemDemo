@@ -7,7 +7,7 @@ const TYPE_CONFIG = {
   info:         { icon: "ℹ️",  color: "border-blue-200 bg-blue-50" },
   account:      { icon: "🏦",  color: "border-green-200 bg-green-50" },
   link:         { icon: "🔗",  color: "border-purple-200 bg-purple-50" },
-  crowdfunding: { icon: "❤️",  color: "border-orange-200 bg-orange-50" },
+  crowdfunding: { icon: "❤️",  color: "border-brand-200 bg-brand-50" },
 };
 
 export default async function WesprzyJNasPage() {
@@ -32,12 +32,12 @@ export default async function WesprzyJNasPage() {
       )}
 
       {methods.length === 0 ? (
-        <div className="bg-orange-50 rounded-2xl p-8 border border-orange-100 text-center">
+        <div className="bg-brand-50 rounded-2xl p-8 border border-brand-100 text-center">
           <p className="text-4xl mb-3">🐱</p>
           <p className="text-gray-700 font-medium mb-2">Szczegóły dotyczące wsparcia zostaną wkrótce dodane.</p>
           <p className="text-gray-500 text-sm">
             Tymczasem skontaktuj się z nami przez{" "}
-            <a href="/kontakt" className="text-brand-600 hover:underline">formularz kontaktowy</a>.
+            <a href="/kontakt" className="link-accent hover:underline">formularz kontaktowy</a>.
           </p>
         </div>
       ) : (
