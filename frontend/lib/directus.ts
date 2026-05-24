@@ -15,7 +15,11 @@ import type {
 
 // ─── Client ──────────────────────────────────────────────────────────────────
 
-const directusUrl = process.env.DIRECTUS_URL ?? "https://ja-pacze-sercem-cms.onrender.com";
+// DIRECTUS_URL is server-only; NEXT_PUBLIC_DIRECTUS_URL is available in browser too
+const directusUrl = process.env.DIRECTUS_URL ?? process.env.NEXT_PUBLIC_DIRECTUS_URL ?? "https://ja-pacze-sercem-cms.onrender.com";
+
+// For client-side asset URLs (used in client components), use the public var
+const publicDirectusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL ?? process.env.DIRECTUS_URL ?? "https://ja-pacze-sercem-cms.onrender.com";
 const directusToken = process.env.DIRECTUS_TOKEN ?? "";
 
 export const directus = createDirectus(directusUrl)
@@ -27,7 +31,7 @@ export const directus = createDirectus(directusUrl)
  *  Params are only useful for raw <img> tags or direct downloads.
  */
 export function assetUrl(fileId: string, params?: Record<string, string>): string {
-  const base = `${directusUrl}/assets/${fileId}`;
+  const base = `${publicDirectusUrl}/assets/${fileId}`;
   if (!params || Object.keys(params).length === 0) return base;
   const qs = new URLSearchParams(params).toString();
   return `${base}?${qs}`;
@@ -400,7 +404,7 @@ export interface SiteSettings {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const defaults: SiteSettings = {
-    site_name: process.env.NEXT_PUBLIC_SITE_NAME ?? "Ja Paczę Sercem",
+    site_name: process.env.NEXT_PUBLIC_SITE_NAME ?? "Ja Pacze Sercem",
     tagline: null,
     logo: null,
     banner_enabled: false,

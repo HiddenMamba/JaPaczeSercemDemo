@@ -55,7 +55,7 @@
     }
   ],
   "fields": [
-    { "collection": "cats", "field": "id",            "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "cats", "field": "id",            "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
     { "collection": "cats", "field": "slug",          "type": "string",  "schema": { "is_unique": true, "is_nullable": false }, "meta": { "interface": "input", "note": "Unikalny identyfikator URL, np. whiskers-2024" } },
     { "collection": "cats", "field": "status",        "type": "string",  "schema": { "default_value": "available" }, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Dostępny","value": "available"},{"text": "Zarezerwowany","value": "reserved"},{"text": "Adoptowany","value": "adopted"}] }, "width": "half" } },
     { "collection": "cats", "field": "category",      "type": "string",  "schema": {}, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Kocię (< 1 rok)","value": "kitten"},{"text": "Dorosły (1–7 lat)","value": "adult"},{"text": "Senior (7+ lat)","value": "senior"}] }, "width": "half" } },
@@ -75,11 +75,11 @@
     { "collection": "cats_files", "field": "cats_id",            "type": "uuid",    "schema": {}, "meta": { "hidden": true } },
     { "collection": "cats_files", "field": "directus_files_id",  "type": "uuid",    "schema": {}, "meta": { "hidden": true } },
 
-    { "collection": "cat_traits", "field": "id",    "type": "uuid",   "schema": { "is_primary_key": true, "has_auto_increment": false }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "cat_traits", "field": "id",    "type": "uuid",   "schema": { "is_primary_key": true, "has_auto_increment": false }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
     { "collection": "cat_traits", "field": "icon",  "type": "string", "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "Emoji lub nazwa ikony, np. 👁️" } },
     { "collection": "cat_traits", "field": "label", "type": "string", "schema": { "is_nullable": false }, "meta": { "interface": "input" } },
 
-    { "collection": "news", "field": "id",           "type": "uuid",      "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "news", "field": "id",           "type": "uuid",      "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
     { "collection": "news", "field": "slug",         "type": "string",    "schema": { "is_unique": true, "is_nullable": false }, "meta": { "interface": "input" } },
     { "collection": "news", "field": "published_at", "type": "timestamp", "schema": { "is_nullable": true }, "meta": { "interface": "datetime", "width": "half" } },
     { "collection": "news", "field": "cover_image",  "type": "uuid",      "schema": { "is_nullable": true, "foreign_key_table": "directus_files", "foreign_key_column": "id" }, "meta": { "interface": "file-image" } },
@@ -87,30 +87,30 @@
     { "collection": "news", "field": "body",         "type": "text",      "schema": { "is_nullable": false }, "meta": { "interface": "input-rich-text-html" } },
     { "collection": "news", "field": "excerpt",      "type": "text",      "schema": { "is_nullable": true }, "meta": { "interface": "input-multiline" } },
 
-    { "collection": "pages", "field": "id",      "type": "uuid",   "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "pages", "field": "id",      "type": "uuid",   "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
     { "collection": "pages", "field": "slug",    "type": "string", "schema": { "is_unique": true, "is_nullable": false }, "meta": { "interface": "input", "note": "np. about, contact" } },
     { "collection": "pages", "field": "title",   "type": "string", "schema": { "is_nullable": false }, "meta": { "interface": "input" } },
     { "collection": "pages", "field": "content", "type": "text",   "schema": { "is_nullable": true }, "meta": { "interface": "input-rich-text-html" } },
 
-    { "collection": "documents", "field": "id",       "type": "uuid",   "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "documents", "field": "id",       "type": "uuid",   "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
     { "collection": "documents", "field": "name",     "type": "string", "schema": { "is_nullable": false }, "meta": { "interface": "input" } },
     { "collection": "documents", "field": "file",     "type": "uuid",   "schema": { "is_nullable": false, "foreign_key_table": "directus_files", "foreign_key_column": "id" }, "meta": { "interface": "file", "note": "Prześlij PDF lub dokument" } },
     { "collection": "documents", "field": "category", "type": "string", "schema": { "default_value": "other" }, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Raporty finansowe","value": "financial"},{"text": "Formularze adopcyjne","value": "adoption"},{"text": "Inne","value": "other"}] } } },
 
-    { "collection": "menu_items", "field": "id",              "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "menu_items", "field": "id",              "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
     { "collection": "menu_items", "field": "label",           "type": "string",  "schema": { "is_nullable": false }, "meta": { "interface": "input" } },
     { "collection": "menu_items", "field": "url",             "type": "string",  "schema": { "is_nullable": false }, "meta": { "interface": "input", "note": "np. /koty lub https://..." } },
     { "collection": "menu_items", "field": "order",           "type": "integer", "schema": { "default_value": 0 }, "meta": { "interface": "input-integer", "width": "half" } },
     { "collection": "menu_items", "field": "open_in_new_tab", "type": "boolean", "schema": { "default_value": false }, "meta": { "interface": "boolean", "width": "half" } },
     { "collection": "menu_items", "field": "parent",          "type": "uuid",    "schema": { "is_nullable": true }, "meta": { "interface": "select-dropdown-m2o", "note": "Zostaw puste dla elementu głównego" } },
 
-    { "collection": "social_links", "field": "id",       "type": "uuid",   "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
+    { "collection": "social_links", "field": "id",       "type": "uuid",   "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
     { "collection": "social_links", "field": "platform", "type": "string", "schema": {}, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Facebook","value": "facebook"},{"text": "Instagram","value": "instagram"},{"text": "Twitter / X","value": "twitter"},{"text": "YouTube","value": "youtube"},{"text": "TikTok","value": "tiktok"}] } } },
     { "collection": "social_links", "field": "url",      "type": "string", "schema": {}, "meta": { "interface": "input" } },
     { "collection": "social_links", "field": "icon",     "type": "string", "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "Opcjonalna nazwa ikony" } },
 
-    { "collection": "site_settings", "field": "id",                        "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true } },
-    { "collection": "site_settings", "field": "site_name",                 "type": "string",  "schema": { "default_value": "Ja Paczę Sercem" }, "meta": { "interface": "input" } },
+    { "collection": "site_settings", "field": "id",                        "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
+    { "collection": "site_settings", "field": "site_name",                 "type": "string",  "schema": { "default_value": "Ja Pacze Sercem" }, "meta": { "interface": "input" } },
     { "collection": "site_settings", "field": "tagline",                   "type": "string",  "schema": { "is_nullable": true }, "meta": { "interface": "input" } },
     { "collection": "site_settings", "field": "logo",                      "type": "uuid",    "schema": { "is_nullable": true, "foreign_key_table": "directus_files", "foreign_key_column": "id" }, "meta": { "interface": "file-image" } },
     { "collection": "site_settings", "field": "banner_enabled",            "type": "boolean", "schema": { "default_value": false }, "meta": { "interface": "boolean" } },

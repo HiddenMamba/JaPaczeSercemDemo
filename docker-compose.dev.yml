@@ -61,7 +61,7 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_SITE_URL: http://localhost:3000
-        NEXT_PUBLIC_SITE_NAME: "Ja Paczę Sercem"
+        NEXT_PUBLIC_SITE_NAME: "Ja Pacze Sercem"
         NEXT_PUBLIC_DIRECTUS_URL: http://localhost:8055
     restart: unless-stopped
     ports:
@@ -75,7 +75,7 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       CONTACT_EMAIL: ${CONTACT_EMAIL:-hello@example.org}
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
-      NEXT_PUBLIC_SITE_NAME: "Ja Paczę Sercem"
+      NEXT_PUBLIC_SITE_NAME: "Ja Pacze Sercem"
       NEXT_PUBLIC_DIRECTUS_URL: http://localhost:8055
 
 volumes:

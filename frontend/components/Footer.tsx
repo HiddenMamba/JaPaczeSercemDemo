@@ -33,7 +33,7 @@ export function Footer({ socialLinks }: Props) {
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl">🐱</span>
               <span className="font-extrabold text-white text-lg">
-                {process.env.NEXT_PUBLIC_SITE_NAME ?? "Ja Paczę Sercem"}
+                {process.env.NEXT_PUBLIC_SITE_NAME ?? "Ja Pacze Sercem"}
               </span>
             </div>
             <p className="text-sm text-gray-400">Szukamy domów dla kotów potrzebujących miłości.</p>
@@ -75,7 +75,7 @@ export function Footer({ socialLinks }: Props) {
         </div>
 
         <div className="border-t border-gray-800 pt-6 text-center text-xs text-gray-500">
-          © {year} {process.env.NEXT_PUBLIC_SITE_NAME ?? "Ja Paczę Sercem"}. Wszelkie prawa zastrzeżone.
+          © {year} {process.env.NEXT_PUBLIC_SITE_NAME ?? "Ja Pacze Sercem"}. Wszelkie prawa zastrzeżone.
         </div>
       </div>
     </footer>

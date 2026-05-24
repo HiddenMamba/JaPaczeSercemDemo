@@ -1,4 +1,4 @@
-# 🐱 Ja Paczę Sercem — Strona Adopcyjna
+# 🐱 Ja Pacze Sercem — Strona Adopcyjna
 
 Strona internetowa fundacji adopcyjnej zbudowana na **Next.js 15** + **Directus CMS** + **PostgreSQL**.
 
@@ -51,7 +51,7 @@ cat-adoption/
 ### Krok 1 — Neon (baza danych PostgreSQL)
 
 1. Przejdź na https://neon.tech → **Create project**
-2. Nazwa projektu: `ja-paczę-sercem`
+2. Nazwa projektu: `ja-pacze-sercem`
 3. Region: Frankfurt (EU) lub najbliższy
 4. Po utworzeniu skopiuj **Connection string** (format: `postgresql://user:pass@host/db?sslmode=require`)
 5. Zapisz — będzie potrzebny w Kroku 2
@@ -63,7 +63,7 @@ cat-adoption/
 1. Przejdź na https://render.com → **New → Web Service**
 2. Wybierz **Deploy an existing image from a registry**
 3. Image URL: `directus/directus:11`
-4. Nazwa: `ja-paczę-sercem-cms`
+4. Nazwa: `ja-pacze-sercem-cms`
 5. Region: Frankfurt
 6. Instance type: **Free**
 7. Dodaj zmienne środowiskowe (**Environment → Add Environment Variable**):
@@ -81,7 +81,7 @@ cat-adoption/
 | `STORAGE_LOCATIONS` | `local` |
 
 8. Kliknij **Create Web Service** — poczekaj ~3 minuty
-9. Skopiuj URL wdrożenia (np. `https://ja-paczę-sercem-cms.onrender.com`)
+9. Skopiuj URL wdrożenia (np. `https://ja-pacze-sercem-cms.onrender.com`)
 10. Wróć do zmiennych środowiskowych i uzupełnij `PUBLIC_URL` tym URL-em
 11. Otwórz `https://twój-render-url/admin` → zaloguj się → powinieneś zobaczyć panel Directus
 
@@ -148,11 +148,11 @@ W panelu dodaj:
 | `RESEND_API_KEY` | z https://resend.com (opcjonalne — do formularza kontaktowego) |
 | `CONTACT_EMAIL` | twój email kontaktowy |
 | `NEXT_PUBLIC_SITE_URL` | URL Vercel (uzupełnij po deploymencie) |
-| `NEXT_PUBLIC_SITE_NAME` | Ja Paczę Sercem |
+| `NEXT_PUBLIC_SITE_NAME` | Ja Pacze Sercem |
 | `NEXT_PUBLIC_DIRECTUS_URL` | URL Render z Kroku 2 |
 
 6. Kliknij **Deploy** — poczekaj ~2 minuty
-7. Skopiuj URL Vercel (np. `https://ja-paczę-sercem.vercel.app`)
+7. Skopiuj URL Vercel (np. `https://ja-pacze-sercem.vercel.app`)
 8. Wróć do Render → Environment Variables → uzupełnij `CORS_ORIGIN` URL-em Vercel
 9. Wróć do Vercel → Environment Variables → uzupełnij `NEXT_PUBLIC_SITE_URL` URL-em Vercel
 10. W Vercel → **Redeploy** (po uzupełnieniu zmiennych)
@@ -209,8 +209,8 @@ newgrp docker
 sudo apt install -y git
 
 # Klonowanie repozytorium
-git clone https://github.com/HiddenMamba/JaPaczeSercemDemo.git ~/ja-paczę-sercem
-cd ~/ja-paczę-sercem/cat-adoption
+git clone https://github.com/HiddenMamba/JaPaczeSercemDemo.git ~/ja-pacze-sercem
+cd ~/ja-pacze-sercem/cat-adoption
 ```
 
 ### Krok 2 — Konfiguracja środowiska
@@ -223,7 +223,7 @@ nano .env
 Wypełnij wszystkie wartości:
 ```env
 DOMAIN=twojadomena.pl
-SITE_NAME=Ja Paczę Sercem
+SITE_NAME=Ja Pacze Sercem
 POSTGRES_PASSWORD=silne_haslo_bazy_danych
 DIRECTUS_SECRET=losowy_64_znakowy_ciąg
 DIRECTUS_ADMIN_EMAIL=admin@twojadomena.pl
@@ -244,7 +244,7 @@ A    www  IP_SERWERA
 ### Krok 4 — Uruchomienie
 
 ```bash
-cd ~/ja-paczę-sercem/cat-adoption
+cd ~/ja-pacze-sercem/cat-adoption
 
 # Uruchom wszystkie usługi
 docker compose up -d
