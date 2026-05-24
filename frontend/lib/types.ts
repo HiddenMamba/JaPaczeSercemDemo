@@ -20,6 +20,7 @@ export interface Cat {
   id: string;
   slug: string;
   date_of_birth: string | null;
+  date_joined: string | null;
   gender: "male" | "female" | "unknown";
   status: "available" | "reserved" | "adopted" | "rainbow";
   category: "kitten" | "adult" | "senior";
@@ -82,6 +83,7 @@ export interface CatResolved {
   description: string;
   story: string | null;
   date_of_birth: string | null;
+  date_joined: string | null;
   age_years: number;
   age_months: number;
   gender: Cat["gender"];

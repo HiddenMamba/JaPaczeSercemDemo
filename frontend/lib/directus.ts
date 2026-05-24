@@ -79,6 +79,7 @@ function resolveCat(cat: any): CatResolved {
     description: cat.description ?? "",
     story: cat.story ?? null,
     date_of_birth: dob,
+    date_joined: cat.date_joined ?? null,
     age_years: age.years,
     age_months: age.months,
     gender: cat.gender ?? "unknown",
@@ -114,7 +115,7 @@ function resolveArticle(article: any): NewsArticleResolved {
 
 const CAT_FIELDS = [
   "id", "slug", "gender", "status", "category",
-  "name", "description", "story", "date_of_birth",
+  "name", "description", "story", "date_of_birth", "date_joined",
   "photos.directus_files_id.id",
   "photos.directus_files_id.filename_download",
   "photos.directus_files_id.width",
@@ -141,6 +142,7 @@ export async function getCats(
     gender?: string;
     status?: string;
     traits?: string[];
+    sort?: "name" | "age_asc" | "age_desc" | "joined_asc" | "joined_desc";
   }
 ): Promise<CatResolved[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -152,11 +154,20 @@ export async function getCats(
     filter.traits = { cat_traits_id: { id: { _in: filters.traits } } };
   }
 
+  const sortMap: Record<string, string[]> = {
+    name:         ["name"],
+    age_asc:      ["date_of_birth"],
+    age_desc:     ["-date_of_birth"],
+    joined_asc:   ["date_joined"],
+    joined_desc:  ["-date_joined"],
+  };
+  const sortField = sortMap[filters?.sort ?? "name"] ?? ["name"];
+
   const cats = await directus.request(
     readItems("cats", {
       fields: CAT_FIELDS as unknown as string[],
       filter,
-      sort: ["name"],
+      sort: sortField,
       limit: -1,
     })
   );

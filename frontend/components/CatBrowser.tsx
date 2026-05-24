@@ -19,6 +19,15 @@ interface Props {
 type CategoryValue = "kitten" | "adult" | "senior";
 type GenderValue = "male" | "female" | "unknown";
 type StatusValue = "available" | "reserved" | "adopted" | "rainbow";
+type SortValue = "name" | "age_asc" | "age_desc" | "joined_desc" | "joined_asc";
+
+const SORT_LABELS: Record<SortValue, string> = {
+  name:        "Imię (A–Z)",
+  age_asc:     "Wiek (najmłodsze)",
+  age_desc:    "Wiek (najstarsze)",
+  joined_desc: "Najnowsze",
+  joined_asc:  "Najdłużej z nami",
+};
 
 const CATEGORY_LABELS: Record<CategoryValue, string> = {
   kitten: "Kocię",
@@ -44,6 +53,7 @@ const ALL_GENDERS: GenderValue[] = ["male", "female", "unknown"];
 export function CatBrowser({ cats, traits }: Props) {
   const [, startTransition] = useTransition();
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<SortValue>("joined_desc");
   // Multi-select: empty set = "all" (show everything)
   const [categories, setCategories] = useState<Set<CategoryValue>>(new Set());
   const [genders, setGenders] = useState<Set<GenderValue>>(new Set());
@@ -52,7 +62,7 @@ export function CatBrowser({ cats, traits }: Props) {
   const [slideoutCat, setSlideoutCat] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
-    return cats.filter((cat) => {
+    const result = cats.filter((cat) => {
       if (search && !cat.name.toLowerCase().includes(search.toLowerCase())) return false;
       if (categories.size > 0 && !categories.has(cat.category)) return false;
       if (genders.size > 0 && !genders.has(cat.gender)) return false;
@@ -65,7 +75,19 @@ export function CatBrowser({ cats, traits }: Props) {
       }
       return true;
     });
-  }, [cats, search, categories, genders, statuses, selectedTraits]);
+
+    // Client-side sort
+    return [...result].sort((a, b) => {
+      switch (sort) {
+        case "name":        return a.name.localeCompare(b.name, "pl");
+        case "age_asc":     return (a.date_of_birth ?? "9999") > (b.date_of_birth ?? "9999") ? -1 : 1;
+        case "age_desc":    return (a.date_of_birth ?? "0000") < (b.date_of_birth ?? "0000") ? -1 : 1;
+        case "joined_desc": return (b.date_joined ?? b.id) > (a.date_joined ?? a.id) ? 1 : -1;
+        case "joined_asc":  return (a.date_joined ?? a.id) > (b.date_joined ?? b.id) ? 1 : -1;
+        default:            return 0;
+      }
+    });
+  }, [cats, search, categories, genders, statuses, selectedTraits, sort]);
 
   function toggleCategory(v: CategoryValue) {
     startTransition(() => setCategories((prev) => { const n = new Set(prev); n.has(v) ? n.delete(v) : n.add(v); return n; }));
@@ -93,14 +115,23 @@ export function CatBrowser({ cats, traits }: Props) {
     <div>
       {/* Filters */}
       <div className="bg-gray-50 rounded-2xl p-4 mb-8 space-y-4">
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           <input
             type="search"
             placeholder="Szukaj po imieniu…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
+            className="flex-1 min-w-[160px] rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
           />
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortValue)}
+            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+          >
+            {(Object.keys(SORT_LABELS) as SortValue[]).map((v) => (
+              <option key={v} value={v}>{SORT_LABELS[v]}</option>
+            ))}
+          </select>
           <button type="button" onClick={randomCat} className="btn-secondary py-2 px-4 text-sm shrink-0">
             Losowy kot 🎲
           </button>
@@ -172,6 +203,7 @@ export function CatBrowser({ cats, traits }: Props) {
             type="button"
             onClick={() => {
               setSearch("");
+              setSort("joined_desc");
               setCategories(new Set());
               setGenders(new Set());
               setStatuses(new Set());

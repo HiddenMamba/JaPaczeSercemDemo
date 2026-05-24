@@ -79,6 +79,7 @@
     { "collection": "cats", "field": "name",          "type": "string",  "schema": { "is_nullable": false }, "meta": { "interface": "input", "translations": [{"language":"pl-PL","translation":"Imię"}] } },
     { "collection": "cats", "field": "description",   "type": "text",    "schema": { "is_nullable": false }, "meta": { "interface": "input-multiline", "translations": [{"language":"pl-PL","translation":"Opis"}] } },
     { "collection": "cats", "field": "story",         "type": "text",    "schema": { "is_nullable": true }, "meta": { "interface": "input-multiline", "note": "Opcjonalna historia kota", "translations": [{"language":"pl-PL","translation":"Historia"}] } },
+    { "collection": "cats", "field": "date_joined",    "type": "date",    "schema": { "is_nullable": true }, "meta": { "interface": "datetime", "width": "half", "note": "Data dołączenia kota do fundacji", "translations": [{"language":"pl-PL","translation":"Data dołączenia"}] } },
     { "collection": "cats", "field": "photos",        "type": "alias",   "meta": { "interface": "files", "special": ["files"], "note": "Zdjęcia kota — pierwsze jako główne", "translations": [{"language":"pl-PL","translation":"Zdjęcia"}] } },
     { "collection": "cats", "field": "traits",        "type": "alias",   "meta": { "interface": "list-m2m", "special": ["m2m"], "options": { "template": "{{cat_traits_id.label}}" }, "note": "Wybierz cechy kota", "translations": [{"language":"pl-PL","translation":"Cechy szczególne"}] } },
 

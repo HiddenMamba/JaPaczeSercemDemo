@@ -13,7 +13,15 @@ export default async function HomePage() {
   ]);
 
   const stats = await getHomepageStats(siteSettings.cats_adopted_before_website);
-  const featuredCats = cats.slice(0, 6);
+  // Show newest cats first (by date_joined desc, then by id desc as fallback)
+  const featuredCats = [...cats]
+    .sort((a, b) => {
+      const aDate = a.date_joined ?? "";
+      const bDate = b.date_joined ?? "";
+      if (bDate !== aDate) return bDate > aDate ? 1 : -1;
+      return b.id > a.id ? 1 : -1;
+    })
+    .slice(0, 6);
   const yearsActive = siteSettings.founded_year
     ? new Date().getFullYear() - siteSettings.founded_year
     : null;
