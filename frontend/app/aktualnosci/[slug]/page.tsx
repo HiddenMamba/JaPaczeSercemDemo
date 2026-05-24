@@ -42,7 +42,7 @@ export default async function ArticlePage({ params }: Props) {
       {article.cover_image && (
         <div className="aspect-video relative bg-gray-100 rounded-2xl overflow-hidden mb-8">
           <Image
-            src={assetUrl(article.cover_image.id, { width: "1200", height: "675", fit: "cover" })}
+            src={assetUrl(article.cover_image.id)}
             alt={article.title}
             fill
             className="object-cover"

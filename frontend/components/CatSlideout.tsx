@@ -56,7 +56,7 @@ export function CatSlideout({ cat, open, onClose }: Props) {
 
             <div className="aspect-[4/3] relative bg-gray-100 shrink-0">
               {mainPhoto ? (
-                <Image src={assetUrl(mainPhoto.id, { width: "800", height: "600", fit: "cover" })} alt={cat.name} fill className="object-cover" />
+                <Image src={assetUrl(mainPhoto.id)} alt={cat.name} fill className="object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-8xl">🐱</div>
               )}
@@ -99,7 +99,7 @@ export function CatSlideout({ cat, open, onClose }: Props) {
                 <div className="grid grid-cols-4 gap-2 mb-6">
                   {cat.photos.slice(0, 4).map((photo) => (
                     <div key={photo.id} className="aspect-square relative rounded-lg overflow-hidden bg-gray-100">
-                      <Image src={assetUrl(photo.id, { width: "120", height: "120", fit: "cover" })} alt={cat.name} fill className="object-cover" />
+                      <Image src={assetUrl(photo.id)} alt={cat.name} fill className="object-cover" />
                     </div>
                   ))}
                 </div>

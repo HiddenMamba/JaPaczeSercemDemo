@@ -59,7 +59,7 @@ export default async function CatPage({ params }: Props) {
           <div className="aspect-[4/3] relative bg-gray-100 rounded-2xl overflow-hidden mb-3">
             {mainPhoto ? (
               <Image
-                src={assetUrl(mainPhoto.id, { width: "800", height: "600", fit: "cover" })}
+                src={assetUrl(mainPhoto.id)}
                 alt={cat.name}
                 fill
                 className="object-cover"
@@ -74,7 +74,7 @@ export default async function CatPage({ params }: Props) {
               {cat.photos.slice(1, 5).map((photo) => (
                 <div key={photo.id} className="aspect-square relative rounded-lg overflow-hidden bg-gray-100">
                   <Image
-                    src={assetUrl(photo.id, { width: "200", height: "200", fit: "cover" })}
+                    src={assetUrl(photo.id)}
                     alt={cat.name}
                     fill
                     className="object-cover"

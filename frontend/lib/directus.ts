@@ -22,10 +22,13 @@ export const directus = createDirectus(directusUrl)
   .with(staticToken(directusToken))
   .with(rest());
 
-/** Build the public asset URL for a Directus file */
+/** Build the public asset URL for a Directus file.
+ *  When used with next/image, pass no params — Next.js handles resizing.
+ *  Params are only useful for raw <img> tags or direct downloads.
+ */
 export function assetUrl(fileId: string, params?: Record<string, string>): string {
   const base = `${directusUrl}/assets/${fileId}`;
-  if (!params) return base;
+  if (!params || Object.keys(params).length === 0) return base;
   const qs = new URLSearchParams(params).toString();
   return `${base}?${qs}`;
 }

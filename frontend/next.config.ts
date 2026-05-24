@@ -11,6 +11,13 @@ const nextConfig: NextConfig = {
         pathname: "/assets/**",
       },
       {
+        // Always allow Render CMS hostname for images
+        protocol: "https",
+        hostname: "ja-pacze-sercem-cms.onrender.com",
+        port: "",
+        pathname: "/assets/**",
+      },
+      {
         protocol: "http",
         hostname: "localhost",
         port: "8055",

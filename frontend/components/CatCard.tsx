@@ -25,7 +25,7 @@ export function CatCard({ cat }: Props) {
         <div className="aspect-[4/3] relative bg-gray-100 overflow-hidden">
           {mainPhoto ? (
             <Image
-              src={assetUrl(mainPhoto.id, { width: "600", height: "450", fit: "cover" })}
+              src={assetUrl(mainPhoto.id)}
               alt={cat.name}
               fill
               className="object-cover transition duration-300 group-hover:scale-105"

@@ -1,12 +1,15 @@
 version: "3.8"
 
-# ── Local development: Directus + Postgres only ───────────────────────────────
-# Run Next.js separately with: cd frontend && npm run dev
-#
-# Usage:
-#   cp frontend/.env.example frontend/.env.local
+# ── Local development: full stack on localhost ────────────────────────────────
+# Option A — with Next.js in Docker (full stack):
 #   docker compose -f docker-compose.dev.yml up -d
+#   Open http://localhost:3000
+#
+# Option B — Next.js outside Docker (hot reload):
+#   docker compose -f docker-compose.dev.yml up -d postgres directus
+#   cp frontend/.env.example frontend/.env.local   # edit token if needed
 #   cd frontend && npm install && npm run dev
+#   Open http://localhost:3000
 
 services:
   postgres:
@@ -51,6 +54,29 @@ services:
       CORS_ORIGIN: "http://localhost:3000"
     volumes:
       - directus_dev_uploads:/directus/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SITE_URL: http://localhost:3000
+        NEXT_PUBLIC_SITE_NAME: "Ja Paczę Sercem"
+        NEXT_PUBLIC_DIRECTUS_URL: http://localhost:8055
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - directus
+    environment:
+      DIRECTUS_URL: http://directus:8055
+      DIRECTUS_TOKEN: ${DIRECTUS_TOKEN:-}
+      DIRECTUS_HOST: localhost
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      CONTACT_EMAIL: ${CONTACT_EMAIL:-hello@example.org}
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NEXT_PUBLIC_SITE_NAME: "Ja Paczę Sercem"
+      NEXT_PUBLIC_DIRECTUS_URL: http://localhost:8055
 
 volumes:
   postgres_dev_data:

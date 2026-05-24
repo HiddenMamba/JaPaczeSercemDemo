@@ -17,7 +17,7 @@ export function NewsCard({ article }: Props) {
       <div className="aspect-video relative bg-gray-100 overflow-hidden">
         {article.cover_image ? (
           <Image
-            src={assetUrl(article.cover_image.id, { width: "600", height: "338", fit: "cover" })}
+            src={assetUrl(article.cover_image.id)}
             alt={article.title}
             fill
             className="object-cover transition duration-300 group-hover:scale-105"
