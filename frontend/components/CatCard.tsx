@@ -81,7 +81,7 @@ export function CatCard({ cat }: Props) {
               className="flex-1 btn-primary py-2 text-xs justify-center"
               onClick={(e) => e.stopPropagation()}
             >
-              Chcę adoptować
+              Pełny profil
             </Link>
           </div>
         </div>

@@ -400,6 +400,9 @@ export interface SiteSettings {
   banner_image: { id: string; width?: number; height?: number } | null;
   founded_year: number | null;
   cats_adopted_before_website: number;
+  contact_form_enabled: boolean;
+  contact_email_visible: boolean;
+  contact_email: string | null;
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
@@ -413,6 +416,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     banner_image: null,
     founded_year: null,
     cats_adopted_before_website: 0,
+    contact_form_enabled: true,
+    contact_email_visible: false,
+    contact_email: null,
   };
   try {
     const result = await directus.request(
@@ -420,6 +426,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
         fields: [
           "site_name", "tagline", "banner_enabled", "banner_text", "banner_color",
           "founded_year", "cats_adopted_before_website",
+          "contact_form_enabled", "contact_email_visible", "contact_email",
           "logo.id", "logo.width", "logo.height", "logo.filename_download",
           "banner_image.id", "banner_image.width", "banner_image.height",
         ],
@@ -445,6 +452,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
         : null,
       founded_year: s.founded_year ?? null,
       cats_adopted_before_website: Number(s.cats_adopted_before_website ?? 0),
+      contact_form_enabled: s.contact_form_enabled !== false,
+      contact_email_visible: s.contact_email_visible === true,
+      contact_email: s.contact_email ?? null,
     };
   } catch (e) {
     console.error("getSiteSettings error:", e);

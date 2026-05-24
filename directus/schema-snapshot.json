@@ -49,6 +49,11 @@
       "schema": { "name": "social_links" }
     },
     {
+      "collection": "adoption_questions",
+      "meta": { "icon": "help", "note": "Pytania w formularzu adopcyjnym", "display_template": "{{question}}", "sort_field": "order" },
+      "schema": { "name": "adoption_questions" }
+    },
+    {
       "collection": "site_settings",
       "meta": { "icon": "settings", "note": "Ustawienia strony (singleton)", "display_template": "{{site_name}}", "sort_field": null, "singleton": true },
       "schema": { "name": "site_settings" }
@@ -109,6 +114,15 @@
     { "collection": "social_links", "field": "url",      "type": "string", "schema": {}, "meta": { "interface": "input" } },
     { "collection": "social_links", "field": "icon",     "type": "string", "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "Opcjonalna nazwa ikony" } },
 
+    { "collection": "adoption_questions", "field": "id",          "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
+    { "collection": "adoption_questions", "field": "question",    "type": "string",  "schema": { "is_nullable": false }, "meta": { "interface": "input" } },
+    { "collection": "adoption_questions", "field": "field_type",  "type": "string",  "schema": { "default_value": "text" }, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text":"Tekst","value":"text"},{"text":"Długi tekst","value":"textarea"},{"text":"Jednokrotny wybór","value":"radio"},{"text":"Wielokrotny wybór","value":"multiselect"}] } } },
+    { "collection": "adoption_questions", "field": "options",     "type": "json",    "schema": { "is_nullable": true }, "meta": { "interface": "list", "note": "Opcje dla radio/multiselect: [{\"label\":\"...\",\"value\":\"...\"}]", "special": ["cast-json"] } },
+    { "collection": "adoption_questions", "field": "required",    "type": "boolean", "schema": { "default_value": true }, "meta": { "interface": "boolean", "width": "half" } },
+    { "collection": "adoption_questions", "field": "active",      "type": "boolean", "schema": { "default_value": true }, "meta": { "interface": "boolean", "width": "half" } },
+    { "collection": "adoption_questions", "field": "order",       "type": "integer", "schema": { "default_value": 0 }, "meta": { "interface": "input-integer", "width": "half" } },
+    { "collection": "adoption_questions", "field": "placeholder", "type": "string",  "schema": { "is_nullable": true }, "meta": { "interface": "input", "width": "half" } },
+
     { "collection": "site_settings", "field": "id",                        "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
     { "collection": "site_settings", "field": "site_name",                 "type": "string",  "schema": { "default_value": "Ja Pacze Sercem" }, "meta": { "interface": "input" } },
     { "collection": "site_settings", "field": "tagline",                   "type": "string",  "schema": { "is_nullable": true }, "meta": { "interface": "input" } },
@@ -118,7 +132,10 @@
     { "collection": "site_settings", "field": "banner_color",              "type": "string",  "schema": { "default_value": "orange" }, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Pomarańczowy","value": "orange"},{"text": "Czerwony","value": "red"},{"text": "Zielony","value": "green"},{"text": "Niebieski","value": "blue"}] } } },
     { "collection": "site_settings", "field": "banner_image",              "type": "uuid",    "schema": { "is_nullable": true, "foreign_key_table": "directus_files", "foreign_key_column": "id" }, "meta": { "interface": "file-image" } },
     { "collection": "site_settings", "field": "founded_year",              "type": "integer", "schema": { "is_nullable": true }, "meta": { "interface": "input-integer" } },
-    { "collection": "site_settings", "field": "cats_adopted_before_website","type": "integer", "schema": { "default_value": 0 }, "meta": { "interface": "input-integer" } }
+    { "collection": "site_settings", "field": "cats_adopted_before_website","type": "integer", "schema": { "default_value": 0 }, "meta": { "interface": "input-integer" } },
+    { "collection": "site_settings", "field": "contact_form_enabled",       "type": "boolean", "schema": { "default_value": true }, "meta": { "interface": "boolean", "note": "Pokazuj formularz kontaktowy na stronie /kontakt" } },
+    { "collection": "site_settings", "field": "contact_email_visible",      "type": "boolean", "schema": { "default_value": false }, "meta": { "interface": "boolean", "note": "Pokazuj adres e-mail publicznie na stronie kontaktowej" } },
+    { "collection": "site_settings", "field": "contact_email",              "type": "string",  "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "Publiczny adres e-mail kontaktowy" } }
   ],
   "relations": [
     { "collection": "cats_traits", "field": "cats_id",       "related_collection": "cats",       "meta": { "one_field": "traits",  "junction_field": "cat_traits_id" }, "schema": { "on_delete": "CASCADE" } },
