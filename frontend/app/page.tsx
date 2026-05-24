@@ -36,7 +36,7 @@ export default async function HomePage() {
             <Link href="/koty" className="btn-primary text-base px-8 py-4">
               Poznaj nasze koty
             </Link>
-            <CatRandomizerButton label="Zaskoczy mnie 🎲" />
+            <CatRandomizerButton label="Losuj kota 🎲" />
           </div>
         </div>
       </section>

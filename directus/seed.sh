@@ -36,6 +36,17 @@ if [ -z "$TOKEN" ]; then
 fi
 echo "✅ Authenticated"
 
+# Set admin user language to Polish
+ME=$(curl -s "$DIRECTUS_URL/users/me" -H "Authorization: Bearer $TOKEN" \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['id'])" 2>/dev/null)
+if [ -n "$ME" ]; then
+  curl -s -X PATCH "$DIRECTUS_URL/users/$ME" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{"language":"pl-PL"}' > /dev/null
+  echo "✅ Admin language set to Polish"
+fi
+
 # Helper: POST to collection, print OK or error
 post() {
   COLLECTION=$1
@@ -273,6 +284,70 @@ else
   echo "   ⚠ Could not find Public role - set directus_files read access manually in admin"
 fi
 
+# ── Polish field labels ───────────────────────────────────────────────────────
+echo ""
+echo "=== Polish field labels ==="
+
+patch_field() {
+  COLLECTION=$1; FIELD=$2; LABEL=$3
+  RESULT=$(curl -s -X PATCH "$DIRECTUS_URL/fields/$COLLECTION/$FIELD" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"meta\":{\"translations\":[{\"language\":\"pl-PL\",\"translation\":\"$LABEL\"}]}}")
+  echo "   $(echo $RESULT | python3 -c "import sys,json; d=json.load(sys.stdin); print('✓' if 'data' in d else '✗')" 2>/dev/null) $COLLECTION.$FIELD"
+}
+
+patch_field cats name "Imie"
+patch_field cats slug "URL (slug)"
+patch_field cats status "Status"
+patch_field cats category "Kategoria wiekowa"
+patch_field cats gender "Plec"
+patch_field cats date_of_birth "Data urodzenia"
+patch_field cats description "Opis"
+patch_field cats story "Historia"
+patch_field cats photos "Zdjecia"
+patch_field cats traits "Cechy szczegolne"
+patch_field cat_traits label "Nazwa cechy"
+patch_field cat_traits icon "Ikona (emoji)"
+patch_field news title "Tytul"
+patch_field news slug "URL (slug)"
+patch_field news published_at "Data publikacji"
+patch_field news body "Tresc"
+patch_field news excerpt "Zajawka"
+patch_field news cover_image "Zdjecie glowne"
+patch_field pages slug "Identyfikator strony"
+patch_field pages title "Tytul"
+patch_field pages content "Tresc"
+patch_field documents name "Nazwa dokumentu"
+patch_field documents file "Plik"
+patch_field documents category "Kategoria"
+patch_field menu_items label "Etykieta"
+patch_field menu_items url "Adres URL"
+patch_field menu_items order "Kolejnosc"
+patch_field menu_items open_in_new_tab "Otworz w nowej karcie"
+patch_field social_links platform "Platforma"
+patch_field social_links url "Adres URL"
+patch_field social_links icon "Ikona"
+patch_field site_settings site_name "Nazwa strony"
+patch_field site_settings tagline "Slogan"
+patch_field site_settings banner_enabled "Banner wlaczony"
+patch_field site_settings banner_text "Tekst bannera"
+patch_field site_settings banner_color "Kolor bannera"
+patch_field site_settings founded_year "Rok zalozenia"
+patch_field site_settings cats_adopted_before_website "Koty adoptowane przed strona"
+patch_field site_settings contact_form_enabled "Formularz kontaktowy wlaczony"
+patch_field site_settings contact_email "E-mail kontaktowy"
+patch_field site_settings contact_email_visible "Pokaz e-mail publicznie"
+patch_field adoption_questions question "Pytanie"
+patch_field adoption_questions field_type "Typ pola"
+patch_field adoption_questions options "Opcje (JSON)"
+patch_field adoption_questions required "Wymagane"
+patch_field adoption_questions active "Aktywne"
+patch_field adoption_questions order "Kolejnosc"
+patch_field adoption_questions placeholder "Placeholder"
+
+echo ""
+echo "✅ Seed complete! $(date)"
 echo ""
 echo "Next steps:"
 echo "  1. Go to $DIRECTUS_URL/admin"
