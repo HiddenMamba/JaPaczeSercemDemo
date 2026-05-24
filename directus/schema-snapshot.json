@@ -107,7 +107,7 @@
     { "collection": "menu_items", "field": "url",             "type": "string",  "schema": { "is_nullable": false }, "meta": { "interface": "input", "note": "np. /koty lub https://..." } },
     { "collection": "menu_items", "field": "order",           "type": "integer", "schema": { "default_value": 0 }, "meta": { "interface": "input-integer", "width": "half" } },
     { "collection": "menu_items", "field": "open_in_new_tab", "type": "boolean", "schema": { "default_value": false }, "meta": { "interface": "boolean", "width": "half" } },
-    { "collection": "menu_items", "field": "parent",          "type": "uuid",    "schema": { "is_nullable": true }, "meta": { "interface": "select-dropdown-m2o", "note": "Zostaw puste dla elementu głównego" } },
+    { "collection": "menu_items", "field": "parent",          "type": "string",  "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "ID rodzica (opcjonalne)" } },
 
     { "collection": "social_links", "field": "id",       "type": "uuid",   "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
     { "collection": "social_links", "field": "platform", "type": "string", "schema": {}, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Facebook","value": "facebook"},{"text": "Instagram","value": "instagram"},{"text": "Twitter / X","value": "twitter"},{"text": "YouTube","value": "youtube"},{"text": "TikTok","value": "tiktok"}] } } },
@@ -145,7 +145,6 @@
     { "collection": "news",         "field": "cover_image", "related_collection": "directus_files", "schema": { "on_delete": "SET NULL" } },
     { "collection": "documents",    "field": "file",        "related_collection": "directus_files", "schema": { "on_delete": "RESTRICT" } },
     { "collection": "site_settings","field": "logo",         "related_collection": "directus_files", "schema": { "on_delete": "SET NULL" } },
-    { "collection": "site_settings","field": "banner_image", "related_collection": "directus_files", "schema": { "on_delete": "SET NULL" } },
-    { "collection": "menu_items",   "field": "parent",      "related_collection": "menu_items",     "schema": { "on_delete": "SET NULL" } }
+    { "collection": "site_settings","field": "banner_image", "related_collection": "directus_files", "schema": { "on_delete": "SET NULL" } }
   ]
 }
