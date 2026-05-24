@@ -7,12 +7,8 @@ import {
 import type {
   Cat,
   CatResolved,
-  CatTrait,
   NewsArticle,
   NewsArticleResolved,
-  Page,
-  Document,
-  MenuItem,
   SocialLink,
   Locale,
   DirectusFile,
@@ -37,6 +33,7 @@ export function assetUrl(fileId: string, params?: Record<string, string>): strin
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function resolveTranslation<T extends { languages_code: Locale }>(
   translations: T[],
   locale: Locale,
@@ -56,7 +53,8 @@ function resolveCat(cat: any, _locale: Locale): CatResolved {
   const story = cat.story ?? cat.translations?.[0]?.story ?? null;
 
   // photos: junction rows look like { id, cats_id, directus_files_id: { id, ... } }
-  const photos: DirectusFile[] = (cat.photos ?? [])
+  const photos: DirectusFile[] = ((cat.photos as unknown[]) ?? [])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((p: any) => {
       // nested object from field selector
       if (p?.directus_files_id && typeof p.directus_files_id === "object") {
@@ -69,7 +67,8 @@ function resolveCat(cat: any, _locale: Locale): CatResolved {
     .filter(Boolean) as DirectusFile[];
 
   // traits: junction rows look like { id, cats_id, cat_traits_id: { id, label, icon } }
-  const traits = (cat.traits ?? [])
+  const traits = ((cat.traits as unknown[]) ?? [])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((tr: any) => {
       const trait = (tr?.cat_traits_id && typeof tr.cat_traits_id === "object")
         ? tr.cat_traits_id
@@ -80,6 +79,7 @@ function resolveCat(cat: any, _locale: Locale): CatResolved {
         icon: trait.icon ?? null,
       };
     })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .filter((t: any) => t.id);
 
   // Auto-calculate age and category from date_of_birth

@@ -1,4 +1,3 @@
-import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { directus, assetUrl } from "@/lib/directus";
 import { readItems } from "@directus/sdk";
