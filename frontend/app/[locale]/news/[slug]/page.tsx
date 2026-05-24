@@ -10,9 +10,16 @@ interface Props {
   params: Promise<{ locale: Locale; slug: string }>;
 }
 
+// Allow on-demand rendering for slugs not pre-rendered at build time
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  const articles = await getArticles("en", 100);
-  return articles.map((a) => ({ slug: a.slug }));
+  try {
+    const articles = await getArticles("en", 100);
+    return articles.map((a) => ({ slug: a.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

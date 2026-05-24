@@ -10,10 +10,17 @@ interface Props {
   params: Promise<{ locale: Locale; slug: string }>;
 }
 
+// Allow on-demand rendering for slugs not pre-rendered at build time
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  // Pre-render all available cat pages at build time
-  const cats = await getCats("en");
-  return cats.map((cat) => ({ slug: cat.slug }));
+  // Pre-render cat pages at build time — return empty if Directus is unreachable
+  try {
+    const cats = await getCats("en");
+    return cats.map((cat) => ({ slug: cat.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
