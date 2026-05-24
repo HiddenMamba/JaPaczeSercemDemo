@@ -12,11 +12,13 @@ interface Props {
 }
 
 const DEFAULT_ITEMS = [
-  { id: "home",           label: "Strona główna",  url: "/" },
-  { id: "cats",           label: "Adoptuj kota",   url: "/koty" },
-  { id: "news",           label: "Aktualności",    url: "/aktualnosci" },
-  { id: "about",          label: "O nas",          url: "/o-nas" },
-  { id: "contact",        label: "Kontakt",        url: "/kontakt" },
+  { id: "home",     label: "Strona główna",  url: "/" },
+  { id: "cats",     label: "Adoptuj kota",   url: "/koty" },
+  { id: "news",     label: "Aktualności",    url: "/aktualnosci" },
+  { id: "about",    label: "O nas",          url: "/o-nas" },
+  { id: "partners", label: "Partnerzy",      url: "/partnerzy" },
+  { id: "support",  label: "Wesprzyj nas",   url: "/wesprzyj-nas" },
+  { id: "contact",  label: "Kontakt",        url: "/kontakt" },
 ];
 
 export function Navbar({ menuItems, siteName, logoUrl }: Props) {

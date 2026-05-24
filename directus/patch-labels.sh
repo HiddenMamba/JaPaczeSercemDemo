@@ -108,6 +108,24 @@ pf adoption_questions order "Kolejnosc"
 pf adoption_questions placeholder "Placeholder"
 
 # ── Collection name translations (Data Model display names) ──────────────────
+echo "=== partners ==="
+pf partners name "Nazwa"
+pf partners url "Strona WWW"
+pf partners logo "Logo"
+pf partners description "Opis"
+pf partners order "Kolejnosc"
+pf partners active "Aktywny"
+
+echo "=== support_methods ==="
+pf support_methods title "Tytul"
+pf support_methods type "Typ"
+pf support_methods description "Opis"
+pf support_methods url "Link"
+pf support_methods button_label "Tekst przycisku"
+pf support_methods icon "Ikona (emoji)"
+pf support_methods order "Kolejnosc"
+pf support_methods active "Aktywny"
+
 echo ""
 echo "=== Collection translations ==="
 
@@ -129,6 +147,8 @@ pc "menu_items"         "Element menu"      "Menu"
 pc "social_links"       "Link social media" "Social media"
 pc "site_settings"      "Ustawienia"        "Ustawienia strony"
 pc "adoption_questions" "Pytanie"           "Pytania adopcyjne"
+pc "partners"           "Partner"           "Partnerzy"
+pc "support_methods"    "Sposob wsparcia"   "Sposoby wsparcia"
 
 echo ""
 echo "✅ Done!"

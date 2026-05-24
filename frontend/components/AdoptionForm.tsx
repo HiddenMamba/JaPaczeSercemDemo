@@ -10,6 +10,8 @@ const SOCIAL_ICONS: Record<string, string> = {
   twitter: "🐦",
   youtube: "▶️",
   tiktok: "🎵",
+  linkedin: "💼",
+  other: "🔗",
   default: "🔗",
 };
 
@@ -232,7 +234,7 @@ export function AdoptionForm({ questions, catName, locale, socialLinks = [] }: P
                   rel="noopener noreferrer"
                   className="btn-secondary py-2 px-4 text-sm flex items-center gap-2"
                 >
-                  <span>{SOCIAL_ICONS[link.platform.toLowerCase()] ?? SOCIAL_ICONS.default}</span>
+                  <span>{link.icon || SOCIAL_ICONS[link.platform.toLowerCase()] || SOCIAL_ICONS.default}</span>
                   <span className="capitalize">{link.platform}</span>
                 </a>
               ))}

@@ -374,13 +374,78 @@ export async function getHomepageStats(catsAdoptedBeforeWebsite: number): Promis
   }
 }
 
+// ─── Support Methods ─────────────────────────────────────────────────────────
+
+export interface SupportMethod {
+  id: string;
+  title: string;
+  type: "info" | "account" | "link" | "crowdfunding";
+  description: string | null;
+  url: string | null;
+  button_label: string | null;
+  icon: string | null;
+  order: number;
+}
+
+export async function getSupportMethods(): Promise<SupportMethod[]> {
+  try {
+    const items = await directus.request(
+      readItems("support_methods", {
+        fields: ["id", "title", "type", "description", "url", "button_label", "icon", "order"],
+        filter: { active: { _eq: true } },
+        sort: ["order"],
+        limit: -1,
+      })
+    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return items as any[];
+  } catch {
+    return [];
+  }
+}
+
+// ─── Partners ────────────────────────────────────────────────────────────────
+
+export interface Partner {
+  id: string;
+  name: string;
+  url: string | null;
+  logo: { id: string } | null;
+  description: string | null;
+  order: number;
+}
+
+export async function getPartners(): Promise<Partner[]> {
+  try {
+    const items = await directus.request(
+      readItems("partners", {
+        fields: ["id", "name", "url", "description", "order", "logo.id"],
+        filter: { active: { _eq: true } },
+        sort: ["order"],
+        limit: -1,
+      })
+    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (items as any[]).map((p) => ({
+      id: p.id,
+      name: p.name,
+      url: p.url ?? null,
+      logo: p.logo && typeof p.logo === "object" ? p.logo : null,
+      description: p.description ?? null,
+      order: p.order ?? 0,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 // ─── Social Links ────────────────────────────────────────────────────────────
 
 export async function getSocialLinks(): Promise<SocialLink[]> {
   try {
     const links = await directus.request(
       readItems("social_links", {
-        fields: ["id", "platform", "url", "icon"],
+        fields: ["id", "platform", "url", "icon", "color", "image.id"],
         limit: -1,
       })
     );

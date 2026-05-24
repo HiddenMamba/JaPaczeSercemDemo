@@ -10,6 +10,8 @@ const SOCIAL_CONFIG: Record<string, { icon: string; color: string; label: string
   twitter:   { icon: "🐦", color: "bg-sky-500 hover:bg-sky-600",        label: "Twitter / X" },
   youtube:   { icon: "▶️", color: "bg-red-600 hover:bg-red-700",        label: "YouTube" },
   tiktok:    { icon: "🎵", color: "bg-black hover:bg-gray-900",         label: "TikTok" },
+  linkedin:  { icon: "💼", color: "bg-blue-700 hover:bg-blue-800",      label: "LinkedIn" },
+  other:     { icon: "🔗", color: "bg-gray-600 hover:bg-gray-700",      label: "Link" },
   default:   { icon: "🔗", color: "bg-gray-600 hover:bg-gray-700",      label: "Link" },
 };
 
@@ -41,17 +43,27 @@ export default async function KontaktPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {socialLinks.map((link) => {
               const cfg = SOCIAL_CONFIG[link.platform.toLowerCase()] ?? SOCIAL_CONFIG.default;
+              const emoji = link.icon || cfg.icon;
+              const label = cfg.label !== "Link" ? cfg.label : link.platform;
+              const bgColor = link.color ? undefined : cfg.color;
+              const imgId = link.image ? (typeof link.image === "object" ? link.image.id : link.image) : null;
               return (
                 <a
                   key={link.id}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`flex items-center gap-4 rounded-2xl px-5 py-4 text-white transition ${cfg.color} shadow-sm`}
+                  className={`flex items-center gap-4 rounded-2xl px-5 py-4 text-white transition shadow-sm ${bgColor ?? ""}`}
+                  style={link.color ? { backgroundColor: link.color } : undefined}
                 >
-                  <span className="text-2xl">{cfg.icon}</span>
+                  {imgId ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={`${process.env.NEXT_PUBLIC_DIRECTUS_URL}/assets/${imgId}`} alt={label} className="w-8 h-8 object-contain rounded" />
+                  ) : (
+                    <span className="text-2xl">{emoji}</span>
+                  )}
                   <div>
-                    <p className="font-semibold">{cfg.label}</p>
+                    <p className="font-semibold">{label}</p>
                     <p className="text-xs opacity-75 truncate max-w-[160px]">{link.url.replace(/^https?:\/\//, "")}</p>
                   </div>
                   <span className="ml-auto opacity-70 text-sm">→</span>

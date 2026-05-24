@@ -7,6 +7,8 @@ const SOCIAL_ICONS: Record<string, string> = {
   twitter: "🐦",
   youtube: "▶️",
   tiktok: "🎵",
+  linkedin: "💼",
+  other: "🔗",
   default: "🔗",
 };
 
@@ -65,7 +67,7 @@ export function Footer({ socialLinks }: Props) {
                     className="flex items-center gap-1.5 text-sm hover:text-white transition"
                     aria-label={link.platform}
                   >
-                    <span>{SOCIAL_ICONS[link.platform.toLowerCase()] ?? SOCIAL_ICONS.default}</span>
+                    <span>{link.icon || SOCIAL_ICONS[link.platform.toLowerCase()] || SOCIAL_ICONS.default}</span>
                     <span className="capitalize">{link.platform}</span>
                   </a>
                 ))}

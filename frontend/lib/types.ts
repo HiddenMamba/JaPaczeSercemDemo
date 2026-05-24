@@ -68,7 +68,9 @@ export interface SocialLink {
   id: string;
   platform: string;
   url: string;
-  icon: string;
+  icon: string | null;
+  color: string | null;
+  image: { id: string } | string | null;
 }
 
 // ─── Resolved types (same structure, kept for compatibility) ──────────────────

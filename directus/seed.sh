@@ -62,6 +62,20 @@ post() {
   fi
 }
 
+# Helper: POST only if collection is empty
+post_if_empty() {
+  COLLECTION=$1
+  DATA=$2
+  COUNT=$(curl -s "$DIRECTUS_URL/items/$COLLECTION?aggregate[count]=id&limit=1" \
+    -H "Authorization: Bearer $TOKEN" \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('data',[{}])[0].get('count',{}).get('id','0'))" 2>/dev/null || echo "0")
+  if [ "$COUNT" = "0" ] || [ -z "$COUNT" ]; then
+    post "$COLLECTION" "$DATA"
+  else
+    echo "   ~ $COLLECTION (skipped — already has data)"
+  fi
+}
+
 # Helper: PATCH singleton (upsert — tries PATCH first, falls back to POST)
 patch_singleton() {
   COLLECTION=$1
@@ -106,45 +120,46 @@ patch_singleton site_settings '{
 # ── Cat Traits ────────────────────────────────────────────────────────────────
 echo ""
 echo "=== Cat Traits ==="
-post cat_traits '{"icon":"🦠","label":"FIV+"}'
-post cat_traits '{"icon":"🫣","label":"Niesmia\u0142y"}'
-post cat_traits '{"icon":"👁️","label":"Jednooki"}'
-post cat_traits '{"icon":"🍽️","label":"Potrzebuje diety"}'
-post cat_traits '{"icon":"💊","label":"Leczenie przewlekle"}'
-post cat_traits '{"icon":"🏠","label":"Tylko dom"}'
-post cat_traits '{"icon":"🐾","label":"Przyjazny psom"}'
-post cat_traits '{"icon":"👶","label":"Przyjazny dzieciom"}'
+post_if_empty cat_traits '{"icon":"🦠","label":"FIV+"}'
+post_if_empty cat_traits '{"icon":"🫣","label":"Niesmia\u0142y"}'
+post_if_empty cat_traits '{"icon":"👁️","label":"Jednooki"}'
+post_if_empty cat_traits '{"icon":"🍽️","label":"Potrzebuje diety"}'
+post_if_empty cat_traits '{"icon":"💊","label":"Leczenie przewlekle"}'
+post_if_empty cat_traits '{"icon":"🏠","label":"Tylko dom"}'
+post_if_empty cat_traits '{"icon":"🐾","label":"Przyjazny psom"}'
+post_if_empty cat_traits '{"icon":"👶","label":"Przyjazny dzieciom"}'
 
 # ── Social Links ──────────────────────────────────────────────────────────────
 echo ""
 echo "=== Social Links ==="
-post social_links '{"platform":"facebook","url":"https://facebook.com","icon":"facebook"}'
-post social_links '{"platform":"instagram","url":"https://instagram.com","icon":"instagram"}'
+post_if_empty social_links '{"platform":"facebook","url":"https://facebook.com","icon":"facebook"}'
+post_if_empty social_links '{"platform":"instagram","url":"https://instagram.com","icon":"instagram"}'
 
 # ── Menu Items ────────────────────────────────────────────────────────────────
 echo ""
 echo "=== Menu Items ==="
-post menu_items '{"label":"Strona g\u0142\u00f3wna","url":"/","order":1,"open_in_new_tab":false}'
-post menu_items '{"label":"Adoptuj kota","url":"/koty","order":2,"open_in_new_tab":false}'
-post menu_items '{"label":"Aktualno\u015bci","url":"/aktualnosci","order":3,"open_in_new_tab":false}'
-post menu_items '{"label":"O nas","url":"/o-nas","order":4,"open_in_new_tab":false}'
-post menu_items '{"label":"Kontakt","url":"/kontakt","order":5,"open_in_new_tab":false}'
-post menu_items '{"label":"Wesprzyj nas","url":"/wesprzyj-nas","order":6,"open_in_new_tab":false}'
+post_if_empty menu_items '{"label":"Strona g\u0142\u00f3wna","url":"/","order":1,"open_in_new_tab":false}'
+post_if_empty menu_items '{"label":"Adoptuj kota","url":"/koty","order":2,"open_in_new_tab":false}'
+post_if_empty menu_items '{"label":"Aktualno\u015bci","url":"/aktualnosci","order":3,"open_in_new_tab":false}'
+post_if_empty menu_items '{"label":"O nas","url":"/o-nas","order":4,"open_in_new_tab":false}'
+post_if_empty menu_items '{"label":"Kontakt","url":"/kontakt","order":5,"open_in_new_tab":false}'
+post_if_empty menu_items '{"label":"Partnerzy","url":"/partnerzy","order":6,"open_in_new_tab":false}'
+post_if_empty menu_items '{"label":"Wesprzyj nas","url":"/wesprzyj-nas","order":7,"open_in_new_tab":false}'
 
 # ── Pages ─────────────────────────────────────────────────────────────────────
 echo ""
 echo "=== Pages ==="
-post pages '{
+post_if_empty pages '{
   "slug": "about",
   "title": "O nas",
   "content": "<h2>Kim jestesmy?</h2><p>Jestesmy fundacja adopcyjna pomagajaca kotom znalezc domy pelne milosci. Od 2020 roku pomoglismy ponad 47 kotom znalezc nowe, kochajace rodziny.</p><h2>Nasza misja</h2><p>Wierzymy, ze kazdy kot zasługuje na bezpieczny dom, cieplo i milosc. Pracujemy z lokalnymi schroniskami i wolontariuszami, aby zapewnic kotom najlepsza opieke przed adopcja.</p>"
 }'
-post pages '{
+post_if_empty pages '{
   "slug": "contact",
   "title": "Kontakt",
   "content": "<p>Masz pytanie dotyczace adopcji lub chcesz zostac wolontariuszem? Napisz do nas!</p><p>Odpowiadamy na wiadomosci w ciagu 24-48 godzin.</p>"
 }'
-post pages '{
+post_if_empty pages '{
   "slug": "partners",
   "title": "Partnerzy",
   "content": "<p>Dziekujemy naszym partnerom i sponsorom za nieocenione wsparcie. Razem mozemy pomoc wiekszej liczbie kotow znalezc domy.</p>"
@@ -153,21 +168,21 @@ post pages '{
 # ── Sample News ───────────────────────────────────────────────────────────────
 echo ""
 echo "=== News ==="
-post news '{
+post_if_empty news '{
   "slug": "witamy-na-stronie",
   "title": "Witamy na nowej stronie Ja Pacze Sercem!",
   "published_at": "2024-01-15T10:00:00Z",
   "body": "<p>Z radoscia ogłaszamy uruchomienie nowej strony internetowej fundacji Ja Pacze Sercem. Teraz mozesz latwo przegladac nasze koty, skladac wnioski adopcyjne i sledzic nasze aktualnosci.</p><p>Nasz nowy portal ułatwia nam dotarcie do jeszcze wiekszej liczby kochajacych rodzin, ktore chca dac kotu dom na zawsze.</p>",
   "excerpt": "Uruchomilismy nowa strone internetowa! Teraz mozesz latwo przegladac nasze koty i skladac wnioski adopcyjne online."
 }'
-post news '{
+post_if_empty news '{
   "slug": "jak-przygotowac-dom-na-przyjecie-kota",
   "title": "Jak przygotowac dom na przyjecie kota?",
   "published_at": "2024-02-01T10:00:00Z",
   "body": "<h2>Pierwsze kroki</h2><p>Zanim kot trafi do Twojego domu, warto sie odpowiednio przygotowac. Oto kilka wskazowek, ktore pomoga w plynnym przejsciu.</p><h3>1. Przygotuj bezpieczna przestrzen</h3><p>Wyznacz osobny pokoj lub kacik, gdzie kot bedzie mogl sie najpierw zaaklimatyzowac. Powinien zawierac: miske z woda, jedzenie, kuwete i legowisko.</p><h3>2. Zabezpiecz mieszkanie</h3><p>Sprawdz, czy okna i balkony sa odpowiednio zabezpieczone. Schowaj kable elektryczne i wszelkie male przedmioty, ktore kot moze polknac.</p><h3>3. Pierwsze dni</h3><p>Nie spiesz sie z kontaktem. Pozwol kotu samemu wychodzic ze swojego kacika i poznawac otoczenie we wlasnym tempie.</p>",
   "excerpt": "Adopcja kota to wielka radosc, ale tez odpowiedzialnosc. Dowiedz sie, jak dobrze przygotowac dom na przyjecie nowego czlonka rodziny."
 }'
-post news '{
+post_if_empty news '{
   "slug": "historia-sukcesu-luna",
   "title": "Historia sukcesu: Luna znalazla dom!",
   "published_at": "2024-03-10T10:00:00Z",
@@ -175,10 +190,18 @@ post news '{
   "excerpt": "Luna, nasza lagodna szara kotka, znalazla wymarzony dom. Poznaj jej wzruszajaca historie."
 }'
 
+# ── Support Methods ──────────────────────────────────────────────────────────
+echo ""
+echo "=== Support Methods ==="
+post_if_empty support_methods '{"title":"Przelew bankowy","type":"account","icon":"🏦","order":1,"active":true,"description":"<p>Mozesz wesprzec nas przelewem na konto fundacji:</p><p><strong>Nr konta:</strong> XX XXXX XXXX XXXX XXXX XXXX XXXX</p><p><strong>Tytul:</strong> Darowizna dla fundacji Ja Pacze Sercem</p>","url":null,"button_label":null}'
+post_if_empty support_methods '{"title":"Zrzutka online","type":"crowdfunding","icon":"❤️","order":2,"active":true,"description":"<p>Wesprzyj nas przez platforme Zrzutka.pl - szybko i bezpiecznie.</p>","url":"https://zrzutka.pl","button_label":"Wesprzyj na Zrzutka.pl"}'
+post_if_empty support_methods '{"title":"Darowizna rzeczowa","type":"info","icon":"🎁","order":3,"active":true,"description":"<p>Potrzebujemy rowniez wsparcia rzeczowego:</p><ul><li>Karma dla kotow (sucha i mokra)</li><li>Zewirek/piasek do kuwety</li><li>Zabawki i drapalki</li><li>Koce i posciela</li></ul><p>Skonktaktuj sie z nami, aby umowic przekazanie darowizny.</p>","url":null,"button_label":null}'
+post_if_empty support_methods '{"title":"Wolontariat","type":"info","icon":"🤝","order":4,"active":true,"description":"<p>Szukamy wolontariuszy, ktorzy moga pomoc w:</p><ul><li>Opiece nad kotami w domu tymczasowym</li><li>Transportach do weterynarza</li><li>Promowaniu kotow w mediach spolecznosciowych</li><li>Organizacji wydarzen adopcyjnych</li></ul>","url":null,"button_label":null}'
+
 # ── Demo Cats ─────────────────────────────────────────────────────────────────
 echo ""
 echo "=== Demo Cats ==="
-post cats '{
+post_if_empty cats '{
   "slug": "luna",
   "name": "Luna",
   "status": "available",
@@ -188,7 +211,7 @@ post cats '{
   "description": "Luna to spokojna i lagodna kotka szukajaca cichego domu. Uwielbia lezec na slonecznym parapecie i obserwowac ptaki za oknem.",
   "story": "Luna trafila do nas po tym, jak jej wlasciciel musial wyjechac za granice. Jest dobrze oswojona i bardzo przywiazana do ludzi."
 }'
-post cats '{
+post_if_empty cats '{
   "slug": "oliver",
   "name": "Oliver",
   "status": "available",
@@ -198,7 +221,7 @@ post cats '{
   "description": "Oliver to energiczny kocur z duza osobowoscia. Kocha zabawki z piorkami i wieczorne drapanie za uszami.",
   "story": "Znaleziony jako bezdomny w centrum miasta. Po kilku miesiacach opieki jest gotowy na nowy dom."
 }'
-post cats '{
+post_if_empty cats '{
   "slug": "mruczek",
   "name": "Mruczek",
   "status": "available",
@@ -208,7 +231,7 @@ post cats '{
   "description": "Malutki Mruczek szuka rodziny, ktora da mu duzo milosci. Jest bardzo ciekawski i uwielbia zabawke.",
   "story": null
 }'
-post cats '{
+post_if_empty cats '{
   "slug": "zuzia",
   "name": "Zuzia",
   "status": "reserved",
@@ -218,7 +241,7 @@ post cats '{
   "description": "Zuzia to doswiadczona kotka, ktora zna cene spokoju. Idealna dla osob ceniascych ciche towarzystwo.",
   "story": "Zuzia spedzila 8 lat z jedna rodzina, ktora niestety musiala sie przeprowadzic do mieszkania bez mozliwosci trzymania zwierzat."
 }'
-post cats '{
+post_if_empty cats '{
   "slug": "tygrys",
   "name": "Tygrys",
   "status": "available",
@@ -228,7 +251,7 @@ post cats '{
   "description": "Tygrys ma piekne prazki i charakter pelny energii. Swietnie dogaduje sie z innymi kotami.",
   "story": null
 }'
-post cats '{
+post_if_empty cats '{
   "slug": "czesia",
   "name": "Czesia",
   "status": "available",
@@ -242,14 +265,14 @@ post cats '{
 # ── Adoption Questions ────────────────────────────────────────────────────────
 echo ""
 echo "=== Adoption Questions ==="
-post adoption_questions '{"question":"Imie i nazwisko","field_type":"text","required":true,"active":true,"order":1,"placeholder":"Jan Kowalski","options":null}'
-post adoption_questions '{"question":"Adres e-mail","field_type":"text","required":true,"active":true,"order":2,"placeholder":"jan@example.com","options":null}'
-post adoption_questions '{"question":"Numer telefonu","field_type":"text","required":false,"active":true,"order":3,"placeholder":"+48 600 000 000","options":null}'
-post adoption_questions '{"question":"Gdzie mieszkasz?","field_type":"radio","required":true,"active":true,"order":4,"placeholder":null,"options":[{"label":"Dom z ogrodem","value":"house_garden"},{"label":"Mieszkanie z balkonem","value":"apartment_balcony"},{"label":"Mieszkanie bez balkonu","value":"apartment"}]}'
-post adoption_questions '{"question":"Czy masz inne zwierzeta?","field_type":"multiselect","required":true,"active":true,"order":5,"placeholder":null,"options":[{"label":"Pies","value":"dog"},{"label":"Inny kot","value":"cat"},{"label":"Inne","value":"other"},{"label":"Brak zwierzat","value":"none"}]}'
-post adoption_questions '{"question":"Czy miałes/as wczesniej kota?","field_type":"radio","required":true,"active":true,"order":6,"placeholder":null,"options":[{"label":"Tak, mam doswiadczenie","value":"yes"},{"label":"Nie, to bedzie moj pierwszy kot","value":"no"}]}'
-post adoption_questions '{"question":"Ile godzin dziennie kot bedzie sam w domu?","field_type":"radio","required":true,"active":true,"order":7,"placeholder":null,"options":[{"label":"Do 4 godzin","value":"0-4h"},{"label":"4-8 godzin","value":"4-8h"},{"label":"Powyzej 8 godzin","value":"8h+"}]}'
-post adoption_questions '{"question":"Dlaczego chcesz adoptowac tego kota? Napisz cos o sobie.","field_type":"textarea","required":true,"active":true,"order":8,"placeholder":"Opowiedz nam o sobie...","options":null}'
+post_if_empty adoption_questions '{"question":"Imie i nazwisko","field_type":"text","required":true,"active":true,"order":1,"placeholder":"Jan Kowalski","options":null}'
+post_if_empty adoption_questions '{"question":"Adres e-mail","field_type":"text","required":true,"active":true,"order":2,"placeholder":"jan@example.com","options":null}'
+post_if_empty adoption_questions '{"question":"Numer telefonu","field_type":"text","required":false,"active":true,"order":3,"placeholder":"+48 600 000 000","options":null}'
+post_if_empty adoption_questions '{"question":"Gdzie mieszkasz?","field_type":"radio","required":true,"active":true,"order":4,"placeholder":null,"options":[{"label":"Dom z ogrodem","value":"house_garden"},{"label":"Mieszkanie z balkonem","value":"apartment_balcony"},{"label":"Mieszkanie bez balkonu","value":"apartment"}]}'
+post_if_empty adoption_questions '{"question":"Czy masz inne zwierzeta?","field_type":"multiselect","required":true,"active":true,"order":5,"placeholder":null,"options":[{"label":"Pies","value":"dog"},{"label":"Inny kot","value":"cat"},{"label":"Inne","value":"other"},{"label":"Brak zwierzat","value":"none"}]}'
+post_if_empty adoption_questions '{"question":"Czy miałes/as wczesniej kota?","field_type":"radio","required":true,"active":true,"order":6,"placeholder":null,"options":[{"label":"Tak, mam doswiadczenie","value":"yes"},{"label":"Nie, to bedzie moj pierwszy kot","value":"no"}]}'
+post_if_empty adoption_questions '{"question":"Ile godzin dziennie kot bedzie sam w domu?","field_type":"radio","required":true,"active":true,"order":7,"placeholder":null,"options":[{"label":"Do 4 godzin","value":"0-4h"},{"label":"4-8 godzin","value":"4-8h"},{"label":"Powyzej 8 godzin","value":"8h+"}]}'
+post_if_empty adoption_questions '{"question":"Dlaczego chcesz adoptowac tego kota? Napisz cos o sobie.","field_type":"textarea","required":true,"active":true,"order":8,"placeholder":"Opowiedz nam o sobie...","options":null}'
 
 # ── Set public read access ─────────────────────────────────────────────────────
 echo ""

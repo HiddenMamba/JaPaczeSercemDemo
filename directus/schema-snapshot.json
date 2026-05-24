@@ -49,6 +49,16 @@
       "schema": { "name": "social_links" }
     },
     {
+      "collection": "support_methods",
+      "meta": { "icon": "favorite", "note": "Sposoby wsparcia fundacji (przelewy, linki, opisy)", "display_template": "{{title}}", "sort_field": "order" },
+      "schema": { "name": "support_methods" }
+    },
+    {
+      "collection": "partners",
+      "meta": { "icon": "handshake", "note": "Partnerzy i sponsorzy", "display_template": "{{name}}", "sort_field": "order" },
+      "schema": { "name": "partners" }
+    },
+    {
       "collection": "adoption_questions",
       "meta": { "icon": "help", "note": "Pytania w formularzu adopcyjnym", "display_template": "{{question}}", "sort_field": "order" },
       "schema": { "name": "adoption_questions" }
@@ -110,9 +120,29 @@
     { "collection": "menu_items", "field": "parent",          "type": "string",  "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "ID rodzica (opcjonalne)" } },
 
     { "collection": "social_links", "field": "id",       "type": "uuid",   "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
-    { "collection": "social_links", "field": "platform", "type": "string", "schema": {}, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Facebook","value": "facebook"},{"text": "Instagram","value": "instagram"},{"text": "Twitter / X","value": "twitter"},{"text": "YouTube","value": "youtube"},{"text": "TikTok","value": "tiktok"}] } } },
+    { "collection": "social_links", "field": "platform", "type": "string", "schema": {}, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text": "Facebook","value": "facebook"},{"text": "Instagram","value": "instagram"},{"text": "Twitter / X","value": "twitter"},{"text": "YouTube","value": "youtube"},{"text": "TikTok","value": "tiktok"},{"text": "LinkedIn","value": "linkedin"},{"text": "Inne","value": "other"}], "allowOther": true }, "note": "Wybierz lub wpisz własną platformę" } },
     { "collection": "social_links", "field": "url",      "type": "string", "schema": {}, "meta": { "interface": "input" } },
-    { "collection": "social_links", "field": "icon",     "type": "string", "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "Opcjonalna nazwa ikony" } },
+    { "collection": "social_links", "field": "icon",     "type": "string", "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "Emoji ikony, np. 📘 🐦 💼 — zostaw puste dla domyślnej ikony platformy", "width": "half" } },
+    { "collection": "social_links", "field": "color",    "type": "string", "schema": { "is_nullable": true }, "meta": { "interface": "select-color", "note": "Kolor tła przycisku — zostaw puste dla domyślnego koloru platformy", "width": "half" } },
+    { "collection": "social_links", "field": "image",    "type": "uuid",   "schema": { "is_nullable": true, "foreign_key_table": "directus_files", "foreign_key_column": "id" }, "meta": { "interface": "file-image", "note": "Opcjonalne logo/obrazek zamiast emoji (np. logo marki)" } },
+
+    { "collection": "support_methods", "field": "id",          "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
+    { "collection": "support_methods", "field": "title",       "type": "string",  "schema": { "is_nullable": false }, "meta": { "interface": "input", "note": "np. Przelew bankowy, Zbiórka online, Darowizna rzeczowa" } },
+    { "collection": "support_methods", "field": "type",        "type": "string",  "schema": { "default_value": "info" }, "meta": { "interface": "select-dropdown", "options": { "choices": [{"text":"Informacja","value":"info"},{"text":"Numer konta","value":"account"},{"text":"Link zewnętrzny","value":"link"},{"text":"Zrzutka/Patronite","value":"crowdfunding"}] } } },
+    { "collection": "support_methods", "field": "description", "type": "text",    "schema": { "is_nullable": true }, "meta": { "interface": "input-rich-text-html", "note": "Opis sposobu wsparcia (może zawierać numery kont, instrukcje itp.)" } },
+    { "collection": "support_methods", "field": "url",         "type": "string",  "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "Link do zbiórki, Patronite itp. (opcjonalny)" } },
+    { "collection": "support_methods", "field": "button_label","type": "string",  "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "Tekst przycisku, np. 'Wesprzyj na Patronite'" } },
+    { "collection": "support_methods", "field": "icon",        "type": "string",  "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "Emoji ikony, np. 🏦 💳 ❤️" } },
+    { "collection": "support_methods", "field": "order",       "type": "integer", "schema": { "default_value": 0 }, "meta": { "interface": "input-integer", "width": "half" } },
+    { "collection": "support_methods", "field": "active",      "type": "boolean", "schema": { "default_value": true }, "meta": { "interface": "boolean", "width": "half" } },
+
+    { "collection": "partners", "field": "id",          "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
+    { "collection": "partners", "field": "name",        "type": "string",  "schema": { "is_nullable": false }, "meta": { "interface": "input", "translations": [{"language":"pl-PL","translation":"Nazwa"}] } },
+    { "collection": "partners", "field": "url",         "type": "string",  "schema": { "is_nullable": true }, "meta": { "interface": "input", "note": "Link do strony partnera", "translations": [{"language":"pl-PL","translation":"Strona WWW"}] } },
+    { "collection": "partners", "field": "logo",        "type": "uuid",    "schema": { "is_nullable": true, "foreign_key_table": "directus_files", "foreign_key_column": "id" }, "meta": { "interface": "file-image", "translations": [{"language":"pl-PL","translation":"Logo"}] } },
+    { "collection": "partners", "field": "description", "type": "text",    "schema": { "is_nullable": true }, "meta": { "interface": "input-multiline", "note": "Krótki opis partnera (opcjonalny)", "translations": [{"language":"pl-PL","translation":"Opis"}] } },
+    { "collection": "partners", "field": "order",       "type": "integer", "schema": { "default_value": 0 }, "meta": { "interface": "input-integer", "width": "half", "translations": [{"language":"pl-PL","translation":"Kolejność"}] } },
+    { "collection": "partners", "field": "active",      "type": "boolean", "schema": { "default_value": true }, "meta": { "interface": "boolean", "width": "half", "translations": [{"language":"pl-PL","translation":"Aktywny"}] } },
 
     { "collection": "adoption_questions", "field": "id",          "type": "uuid",    "schema": { "is_primary_key": true }, "meta": { "hidden": true, "readonly": true, "special": ["uuid"] } },
     { "collection": "adoption_questions", "field": "question",    "type": "string",  "schema": { "is_nullable": false }, "meta": { "interface": "input" } },
@@ -144,6 +174,7 @@
     { "collection": "cats_files",  "field": "directus_files_id", "related_collection": "directus_files", "meta": { "one_field": null,     "junction_field": "cats_id" },           "schema": { "on_delete": "CASCADE" } },
     { "collection": "news",         "field": "cover_image", "related_collection": "directus_files", "schema": { "on_delete": "SET NULL" } },
     { "collection": "documents",    "field": "file",        "related_collection": "directus_files", "schema": { "on_delete": "RESTRICT" } },
+    { "collection": "partners",      "field": "logo",         "related_collection": "directus_files", "schema": { "on_delete": "SET NULL" } },
     { "collection": "site_settings","field": "logo",         "related_collection": "directus_files", "schema": { "on_delete": "SET NULL" } },
     { "collection": "site_settings","field": "banner_image", "related_collection": "directus_files", "schema": { "on_delete": "SET NULL" } }
   ]
