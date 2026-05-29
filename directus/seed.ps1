@@ -45,6 +45,19 @@ function Invoke-PatchSingleton($collection, $data) {
   Invoke-Post $collection $data
 }
 
+Write-Host "`n=== Page Style ==="
+Invoke-PatchSingleton page_style @{
+  page_font              = "Amatic SC"
+  heading_font           = $null
+  primary_color          = $null
+  secondary_color        = $null
+  accent_color           = $null
+  background_color       = $null
+  text_color             = $null
+  nav_background_color   = $null
+  footer_background_color = $null
+}
+
 Write-Host "`n=== Site Settings ==="
 Invoke-PatchSingleton site_settings @{
   site_name = "Ja Pacze Sercem"

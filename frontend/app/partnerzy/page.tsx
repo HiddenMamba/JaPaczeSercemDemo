@@ -41,7 +41,7 @@ export default async function PartnerzyPage() {
                   className="h-16 w-auto object-contain mb-4"
                 />
               ) : (
-                <div className="w-16 h-16 rounded-full bg-brand-100 flex items-center justify-center mb-4 text-2xl">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 text-2xl" style={{ backgroundColor: "var(--ps-primary-muted,#ffe8db)" }}>
                   🤝
                 </div>
               )}

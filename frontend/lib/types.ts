@@ -52,6 +52,21 @@ export interface Page {
   content: string;
 }
 
+export interface PageStyle {
+  primary_color: string | null;
+  secondary_color: string | null;
+  accent_color: string | null;
+  background_color: string | null;
+  text_color: string | null;
+  nav_background_color: string | null;
+  footer_background_color: string | null;
+  page_font: string | null;
+  heading_font: string | null;
+  base_font_size: string | null;
+  nav_font: string | null;
+  nav_font_size: string | null;
+}
+
 export interface Document {
   id: string;
   file: DirectusFile;

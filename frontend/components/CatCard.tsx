@@ -45,7 +45,7 @@ export function CatCard({ cat }: Props) {
         <div className="p-4">
           <div className="flex items-start justify-between mb-2">
             <h3 className="font-bold text-gray-900 text-lg leading-tight">{cat.name}</h3>
-            <span className="badge bg-brand-100 text-brand-800 ml-2 shrink-0">{CATEGORY_LABELS[cat.category]}</span>
+            <span className="badge ml-2 shrink-0" style={{ backgroundColor: "var(--ps-primary-muted,#ffe8db)", color: "var(--ps-primary-text,#9a3210)" }}>{CATEGORY_LABELS[cat.category]}</span>
           </div>
 
           <div className="flex flex-wrap gap-1.5 mb-3">

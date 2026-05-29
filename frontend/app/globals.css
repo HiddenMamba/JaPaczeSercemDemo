@@ -2,6 +2,42 @@
 @plugin "@tailwindcss/typography";
 
 /*
+ * Page Style CSS custom properties – set dynamically from Directus page_style
+ * collection via inline style on <html>. These are the fallback defaults that
+ * match the existing design when no page_style is configured.
+ *
+ * Variables:
+ *   --ps-primary        Main brand colour (buttons, CTAs, active chips)
+ *   --ps-secondary      Soft surface colour (section backgrounds)
+ *   --ps-accent         Hover/border accent
+ *   --ps-bg             Page background
+ *   --ps-text           Body text colour
+ *   --ps-nav-bg         Navbar background
+ *   --ps-footer-bg      Footer background
+ *   --ps-font           Body font-family (Google Font name)
+ *   --ps-heading-font   Heading font-family (falls back to --ps-font)
+ */
+:root {
+  --ps-primary:      #eb5e28;
+  --ps-primary-dark: #c44e20;
+  /* Soft tints — auto-computed in JS, fallbacks here match the orange palette */
+  --ps-primary-soft: #fff8f4;   /* brand-50:  very light tint for backgrounds */
+  --ps-primary-muted:#ffe8db;   /* brand-100: light tint for chips/badges */
+  --ps-primary-text: #9a3210;   /* brand-800: dark text on light tint */
+  --ps-secondary:    #fff8f4;
+  --ps-accent:       #c44e20;
+  --ps-bg:           #ffffff;
+  --ps-text:         #111827;
+  --ps-nav-bg:       #ffffff;
+  --ps-footer-bg:    #0a0a0a;
+  --ps-font:         inherit;
+  --ps-heading-font: "Amatic SC", sans-serif;
+  --ps-font-size:    16px;
+  --ps-nav-font:     var(--ps-font, inherit); /* falls back to body font */
+  --ps-nav-font-size: 14px;
+}
+
+/*
  * 60-30-10 palette (warm orange)
  * 60% - white / gray neutrals
  * 30% - brand-50…200 soft peach surfaces
@@ -26,13 +62,36 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-white text-gray-900 antialiased;
+    @apply antialiased;
+    background-color: var(--ps-bg, #ffffff);
+    color: var(--ps-text, #111827);
+    font-family: var(--ps-font, var(--font-geist-sans, system-ui, sans-serif));
+    font-size: var(--ps-font-size, 16px);
   }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--ps-heading-font, "Amatic SC", sans-serif);
+    /* Explicitly use rem (relative to html root 16px) so heading sizes
+       are never affected by body or nav font-size changes */
+    line-height: 1.2;
+  }
+  /* Reset Tailwind heading sizes to rem so they're immune to font-size cascade */
+  h1 { font-size: 2.25rem; }   /* text-4xl */
+  h2 { font-size: 1.875rem; }  /* text-3xl */
+  h3 { font-size: 1.5rem; }    /* text-2xl */
+  h4 { font-size: 1.25rem; }   /* text-xl */
+  h5 { font-size: 1.125rem; }  /* text-lg */
+  h6 { font-size: 1rem; }      /* text-base */
 }
 
 @layer components {
+  /* Primary button — uses CMS brand colour via --ps-primary */
   .btn-primary {
-    @apply inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--ps-primary, #eb5e28);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--ps-primary-dark, var(--ps-accent, #c44e20));
+    filter: brightness(0.92);
   }
   .btn-secondary {
     @apply inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50;
@@ -59,12 +118,57 @@
     @apply py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto;
   }
   .prose-content {
-    @apply prose prose-gray max-w-none prose-a:text-brand-600 prose-a:no-underline hover:prose-a:text-brand-700 hover:prose-a:underline;
+    @apply prose prose-gray max-w-none prose-a:no-underline hover:prose-a:underline;
+  }
+  .prose-content a {
+    color: var(--ps-primary, #c85a28);
+  }
+  .prose-content a:hover {
+    color: var(--ps-primary-dark, var(--ps-accent, #c44e20));
   }
   .input {
-    @apply w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300 bg-white;
+    @apply w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none bg-white;
   }
+  .input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ps-primary, #eb5e28) 30%, transparent);
+  }
+  /* Accent text links */
   .link-accent {
-    @apply text-brand-600 font-medium transition hover:text-brand-700;
+    @apply font-medium transition;
+    color: var(--ps-primary, #c85a28);
+  }
+  .link-accent:hover {
+    color: var(--ps-primary-dark, var(--ps-accent, #c44e20));
+  }
+
+  /* Navbar — transparent glass effect; overridden by custom nav colour from CMS.
+     font-size is scoped only here so it never leaks to headings or body. */
+  .nav-header {
+    background-color: var(--ps-nav-bg, rgba(255,255,255,0.95));
+    font-family: var(--ps-nav-font, var(--ps-font, inherit));
+    font-size: var(--ps-nav-font-size, 14px);
+  }
+  /* Ensure nav links inside the header respect the nav font size */
+  .nav-header a,
+  .nav-header button,
+  .nav-header span {
+    font-size: inherit;
+  }
+
+  /* Active nav link — soft tint of primary colour */
+  .nav-active {
+    color: var(--ps-primary, #eb5e28);
+    background-color: var(--ps-primary-soft, #fff8f4);
+  }
+
+  /* Footer links hover — CSS-only, no JS needed */
+  .footer-link:hover {
+    color: var(--ps-primary, #eb5e28) !important;
+  }
+
+  /* Document list row hover — CSS-only */
+  .doc-list-row:hover {
+    background-color: var(--ps-primary-soft, #fff8f4);
   }
 }

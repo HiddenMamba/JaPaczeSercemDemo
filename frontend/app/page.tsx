@@ -29,7 +29,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero ── */}
-      <section className="relative bg-gradient-to-br from-brand-50 via-white to-brand-50 py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden" style={{ background: "linear-gradient(135deg, var(--ps-primary-soft,#fff8f4) 0%, #ffffff 50%, var(--ps-primary-soft,#fff8f4) 100%)" }}>
         <div className="absolute inset-0 opacity-5 pointer-events-none select-none text-[20rem] leading-none text-center">
           🐱
         </div>
@@ -40,11 +40,16 @@ export default async function HomePage() {
           <p className="text-xl text-gray-600 mb-10 max-w-xl mx-auto">
             Przeglądaj nasze koty szukające kochających rodzin i otwórz swoje serce już dziś.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/koty" className="btn-primary text-base px-8 py-4">
-              Poznaj nasze koty
+          <div className="flex flex-col items-center gap-4">
+            <Link href="/wesprzyj-nas" className="btn-primary text-lg px-10 py-5 shadow-md hover:shadow-lg">
+              Dowiedz się jak możesz nam pomóc ❤️
             </Link>
-            <CatRandomizerButton label="Losuj kota 🎲" />
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link href="/koty" className="btn-secondary text-base px-8 py-4">
+                Poznaj nasze koty
+              </Link>
+              <CatRandomizerButton label="Losuj kota 🎲" />
+            </div>
           </div>
         </div>
       </section>
@@ -69,19 +74,19 @@ export default async function HomePage() {
       </section>
 
       {/* ── Stats Banner ── */}
-      <section className="bg-brand-50 border-y border-brand-100 py-12 px-4">
+      <section className="border-y py-12 px-4" style={{ backgroundColor: "var(--ps-primary-soft,#fff8f4)", borderColor: "var(--ps-primary-muted,#ffe8db)" }}>
         <div className={`max-w-4xl mx-auto grid gap-8 text-center ${yearsActive ? "grid-cols-3" : "grid-cols-2"}`}>
           <div>
-            <div className="text-4xl font-extrabold text-brand-700">{stats.available}</div>
+            <div className="text-4xl font-extrabold" style={{ color: "var(--ps-primary)" }}>{stats.available}</div>
             <div className="text-gray-600 mt-1 text-sm">Kotów szuka domu</div>
           </div>
           <div>
-            <div className="text-4xl font-extrabold text-brand-700">{stats.adopted}+</div>
+            <div className="text-4xl font-extrabold" style={{ color: "var(--ps-primary)" }}>{stats.adopted}+</div>
             <div className="text-gray-600 mt-1 text-sm">Kotów znalazło dom</div>
           </div>
           {yearsActive && (
             <div>
-              <div className="text-4xl font-extrabold text-brand-700">{yearsActive}+</div>
+              <div className="text-4xl font-extrabold" style={{ color: "var(--ps-primary)" }}>{yearsActive}+</div>
               <div className="text-gray-600 mt-1 text-sm">Lat działalności</div>
             </div>
           )}

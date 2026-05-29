@@ -29,7 +29,7 @@ export function NewsCard({ article }: Props) {
       </div>
       <div className="p-4 flex flex-col flex-1">
         <p className="text-xs text-gray-400 mb-2">{publishedDate}</p>
-        <h3 className="font-bold text-gray-900 text-base leading-snug mb-2 line-clamp-2 group-hover:text-brand-700 transition">
+        <h3 className="font-bold text-gray-900 text-base leading-snug mb-2 line-clamp-2 transition group-hover:underline">
           {article.title}
         </h3>
         {article.excerpt && (

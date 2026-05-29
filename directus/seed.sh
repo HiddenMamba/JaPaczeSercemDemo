@@ -101,6 +101,21 @@ patch_singleton() {
   fi
 }
 
+# ── Page Style ────────────────────────────────────────────────────────────────
+echo ""
+echo "=== Page Style ==="
+patch_singleton page_style '{
+  "page_font": "Amatic SC",
+  "heading_font": null,
+  "primary_color": null,
+  "secondary_color": null,
+  "accent_color": null,
+  "background_color": null,
+  "text_color": null,
+  "nav_background_color": null,
+  "footer_background_color": null
+}'
+
 # ── Site Settings ─────────────────────────────────────────────────────────────
 echo ""
 echo "=== Site Settings ==="

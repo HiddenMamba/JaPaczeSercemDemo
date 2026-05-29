@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { getMenuItems, getSocialLinks, getSiteSettings, assetUrl } from "@/lib/directus";
+import { getMenuItems, getSocialLinks, getSiteSettings, getPageStyle, buildStyleVars, buildGoogleFontsUrl, assetUrl } from "@/lib/directus";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SiteBanner } from "@/components/SiteBanner";
@@ -23,17 +23,29 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [menuItems, socialLinks, siteSettings] = await Promise.all([
+  const [menuItems, socialLinks, siteSettings, pageStyle] = await Promise.all([
     getMenuItems(),
     getSocialLinks(),
     getSiteSettings(),
+    getPageStyle(),
   ]);
   const logoUrl = siteSettings.logo ? assetUrl(siteSettings.logo.id) : null;
+  const styleVars = buildStyleVars(pageStyle);
+  const googleFontsUrl = buildGoogleFontsUrl(pageStyle);
 
   return (
-    <html lang="pl">
+    <html lang="pl" style={styleVars as React.CSSProperties}>
+      <head>
+        {googleFontsUrl && (
+          <>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+            <link rel="stylesheet" href={googleFontsUrl} />
+          </>
+        )}
+      </head>
       <body>
-        <div className="min-h-screen flex flex-col bg-white text-gray-900 antialiased">
+        <div className="min-h-screen flex flex-col bg-[var(--ps-bg,#ffffff)] text-[var(--ps-text,#111827)] antialiased">
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 btn-primary z-50"

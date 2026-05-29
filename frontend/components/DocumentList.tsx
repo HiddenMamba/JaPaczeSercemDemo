@@ -53,13 +53,13 @@ export function DocumentList({ documents }: Props) {
                 download={doc.file.filename_download}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-4 px-4 py-3 bg-white hover:bg-brand-50 transition group"
+                className="flex items-center gap-4 px-4 py-3 bg-white transition group doc-list-row"
               >
                 <span className="text-2xl shrink-0">
                   {FILE_ICON[doc.file.type] ?? FILE_ICON.default}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 group-hover:text-brand-800 truncate">
+                  <p className="font-medium text-gray-900 truncate">
                     {doc.name}
                   </p>
                   <p className="text-xs text-gray-400">{formatSize(doc.file.filesize)}</p>

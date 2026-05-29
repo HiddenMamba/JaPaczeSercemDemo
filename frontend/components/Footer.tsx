@@ -28,7 +28,7 @@ export function Footer({ socialLinks }: Props) {
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME ?? "Ja Pacze Sercem";
 
   return (
-    <footer className="bg-neutral-950 text-neutral-400 mt-auto">
+    <footer className="text-neutral-400 mt-auto" style={{ backgroundColor: "var(--ps-footer-bg, #0a0a0a)" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
@@ -44,7 +44,7 @@ export function Footer({ socialLinks }: Props) {
             <ul className="space-y-2 text-sm">
               {NAV_LINKS.map(({ href, label }) => (
                 <li key={href}>
-                  <Link href={href} className="transition hover:text-brand-500">
+                  <Link href={href} className="footer-link transition">
                     {label}
                   </Link>
                 </li>
@@ -62,7 +62,7 @@ export function Footer({ socialLinks }: Props) {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-sm transition hover:text-brand-500"
+                    className="footer-link flex items-center gap-1.5 text-sm transition"
                     aria-label={link.platform}
                   >
                     <span>{link.icon || SOCIAL_ICONS[link.platform.toLowerCase()] || SOCIAL_ICONS.default}</span>

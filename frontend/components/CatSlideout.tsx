@@ -75,7 +75,7 @@ export function CatSlideout({ cat, open, onClose }: Props) {
 
             <div className="p-6 flex-1">
               <div className="flex flex-wrap gap-2 mb-4">
-                <span className="badge bg-brand-100 text-brand-800">{CATEGORY_LABELS[cat.category]}</span>
+                <span className="badge" style={{ backgroundColor: "var(--ps-primary-muted,#ffe8db)", color: "var(--ps-primary-text,#9a3210)" }}>{CATEGORY_LABELS[cat.category]}</span>
                 <span className="badge bg-purple-100 text-purple-800">{GENDER_LABELS[cat.gender]}</span>
                 {cat.date_of_birth && (
                   <span className="badge bg-blue-100 text-blue-800">
@@ -98,7 +98,7 @@ export function CatSlideout({ cat, open, onClose }: Props) {
               <p className="text-gray-700 leading-relaxed mb-4">{cat.description}</p>
 
               {cat.story && (
-                <div className="bg-brand-50 rounded-xl p-4 mb-6">
+                <div className="rounded-xl p-4 mb-6" style={{ backgroundColor: "var(--ps-primary-soft,#fff8f4)" }}>
                   <p className="text-gray-700 text-sm leading-relaxed italic">{cat.story}</p>
                 </div>
               )}

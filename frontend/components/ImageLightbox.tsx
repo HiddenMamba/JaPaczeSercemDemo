@@ -157,7 +157,8 @@ export function LightboxTrigger({
         e.stopPropagation();
         onOpen();
       }}
-      className={`group/lightbox relative block w-full h-full cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 ${className}`}
+      className={`group/lightbox relative block w-full h-full cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${className}`}
+      style={{ "--tw-ring-color": "var(--ps-primary)" } as React.CSSProperties}
       aria-label="Powiększ zdjęcie"
     >
       {children}

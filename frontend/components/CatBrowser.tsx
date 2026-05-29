@@ -91,12 +91,12 @@ export function CatBrowser({ cats, traits }: Props) {
             placeholder="Szukaj po imieniu…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 min-w-[160px] rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300 bg-white"
+            className="flex-1 min-w-[160px] rounded-xl border border-gray-200 px-4 py-2.5 text-sm bg-white input"
           />
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as CatSort)}
-            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-300"
+            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm bg-white input"
           >
             {CAT_SORT_VALUES.map((v) => (
               <option key={v} value={v}>{SORT_LABELS[v]}</option>
@@ -236,8 +236,9 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       type="button"
       onClick={onClick}
       className={`badge cursor-pointer transition border ${
-        active ? "bg-brand-700 text-white border-brand-700" : "bg-white text-gray-600 border-gray-200 hover:border-brand-200"
+        active ? "text-white border-transparent" : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
       }`}
+      style={active ? { backgroundColor: "var(--ps-primary)", borderColor: "var(--ps-primary)" } : undefined}
     >
       {children}
     </button>

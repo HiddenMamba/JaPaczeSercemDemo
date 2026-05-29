@@ -5,8 +5,8 @@ import Image from "next/image";
 import type { SiteSettings } from "@/lib/directus";
 
 const BG_COLORS: Record<string, string> = {
-  orange: "bg-brand-700 text-white",
-  red:    "bg-brand-700 text-white",
+  orange: "",
+  red:    "bg-red-600 text-white",
   green:  "bg-green-600 text-white",
   blue:   "bg-blue-600 text-white",
   purple: "bg-purple-600 text-white",
@@ -57,8 +57,12 @@ export function SiteBanner({ settings }: Props) {
   }
 
   // Text-only banner
+  const isOrange = !colorClass; // orange uses CSS var inline
   return (
-    <div className={`${colorClass} py-2 px-4 text-center text-sm font-medium relative`}>
+    <div
+      className={`${colorClass || "text-white"} py-2 px-4 text-center text-sm font-medium relative`}
+      style={isOrange ? { backgroundColor: "var(--ps-primary)" } : undefined}
+    >
       {settings.banner_text}
       <button
         onClick={() => setDismissed(true)}

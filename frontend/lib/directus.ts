@@ -13,6 +13,7 @@ import type {
   NewsArticleResolved,
   SocialLink,
   DirectusFile,
+  PageStyle,
 } from "./types";
 
 // ─── Client ──────────────────────────────────────────────────────────────────
@@ -24,9 +25,9 @@ const directusUrl = process.env.DIRECTUS_URL ?? process.env.NEXT_PUBLIC_DIRECTUS
 const publicDirectusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL ?? process.env.DIRECTUS_URL ?? "https://ja-pacze-sercem-cms.onrender.com";
 const directusToken = process.env.DIRECTUS_TOKEN ?? "";
 
-export const directus = createDirectus(directusUrl)
-  .with(staticToken(directusToken))
-  .with(rest());
+export const directus = directusToken
+  ? createDirectus(directusUrl).with(staticToken(directusToken)).with(rest())
+  : createDirectus(directusUrl).with(rest());
 
 /** Build the public asset URL for a Directus file.
  *  When used with next/image, pass no params - Next.js handles resizing.
@@ -540,6 +541,135 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     console.error("getSiteSettings error:", e);
     return defaults;
   }
+}
+
+// ─── Page Style ───────────────────────────────────────────────────────────────
+
+export { type PageStyle };
+
+export const PAGE_STYLE_DEFAULTS: PageStyle = {
+  primary_color: null,
+  secondary_color: null,
+  accent_color: null,
+  background_color: null,
+  text_color: null,
+  nav_background_color: null,
+  footer_background_color: null,
+  page_font: null,
+  heading_font: "Amatic SC",
+  base_font_size: "16",
+  nav_font: null,
+  nav_font_size: "14",
+};
+
+export async function getPageStyle(): Promise<PageStyle> {
+  try {
+    const result = await directus.request(
+      readItems("page_style", {
+        fields: [
+          "primary_color", "secondary_color", "accent_color",
+          "background_color", "text_color",
+          "nav_background_color", "footer_background_color",
+          "page_font", "heading_font", "base_font_size",
+          "nav_font", "nav_font_size",
+        ],
+        limit: 1,
+      })
+    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const s = Array.isArray(result) ? (result as any[])[0] : (result as any);
+    if (!s) return PAGE_STYLE_DEFAULTS;
+    return {
+      primary_color: s.primary_color ?? null,
+      secondary_color: s.secondary_color ?? null,
+      accent_color: s.accent_color ?? null,
+      background_color: s.background_color ?? null,
+      text_color: s.text_color ?? null,
+      nav_background_color: s.nav_background_color ?? null,
+      footer_background_color: s.footer_background_color ?? null,
+      page_font: s.page_font ?? null,
+      heading_font: s.heading_font ?? "Amatic SC",
+      base_font_size: s.base_font_size ?? "16",
+      nav_font: s.nav_font ?? null,
+      nav_font_size: s.nav_font_size ?? "14",
+    };
+  } catch (e) {
+    console.error("getPageStyle error:", e);
+    return PAGE_STYLE_DEFAULTS;
+  }
+}
+
+/**
+ * Build inline CSS custom properties string from PageStyle.
+ * Only emits variables for non-null values – CSS fallbacks handle the rest.
+ */
+/**
+ * Darken a hex color by the given percentage (0–100).
+ * Used to auto-generate --ps-primary-dark from --ps-primary.
+ */
+/**
+ * Adjust a hex color brightness.
+ * Positive percent = darken, negative percent = lighten toward white.
+ */
+function darkenHex(hex: string, percent: number): string {
+  const h = hex.replace("#", "");
+  if (h.length !== 6) return hex;
+  const base = [
+    parseInt(h.slice(0, 2), 16),
+    parseInt(h.slice(2, 4), 16),
+    parseInt(h.slice(4, 6), 16),
+  ];
+  const adjusted = base.map((c) =>
+    percent >= 0
+      ? Math.max(0, Math.round(c * (1 - percent / 100)))
+      : Math.min(255, Math.round(c + (255 - c) * (-percent / 100)))
+  );
+  return `#${adjusted.map((c) => c.toString(16).padStart(2, "0")).join("")}`;
+}
+
+export function buildStyleVars(style: PageStyle): Record<string, string> {
+  const vars: Record<string, string> = {};
+  if (style.primary_color) {
+    vars["--ps-primary"]      = style.primary_color;
+    vars["--ps-primary-dark"] = style.accent_color ?? darkenHex(style.primary_color, 15);
+    vars["--ps-primary-soft"] = darkenHex(style.primary_color, -80); // very light tint
+    vars["--ps-primary-muted"]= darkenHex(style.primary_color, -60); // light tint
+    vars["--ps-primary-text"] = darkenHex(style.primary_color, 35);  // dark text
+  }
+  if (style.secondary_color)      vars["--ps-secondary"]      = style.secondary_color;
+  if (style.accent_color)         vars["--ps-accent"]         = style.accent_color;
+  if (style.background_color)     vars["--ps-bg"]             = style.background_color;
+  if (style.text_color)           vars["--ps-text"]           = style.text_color;
+  if (style.nav_background_color) vars["--ps-nav-bg"]         = style.nav_background_color;
+  if (style.footer_background_color) vars["--ps-footer-bg"]   = style.footer_background_color;
+  if (style.page_font)            vars["--ps-font"]           = `"${style.page_font}", sans-serif`;
+  if (style.heading_font)         vars["--ps-heading-font"]   = `"${style.heading_font}", sans-serif`;
+  if (style.base_font_size)       vars["--ps-font-size"]      = `${style.base_font_size}px`;
+  // Nav font falls back to page_font if not set (empty string = use page font)
+  if (style.nav_font)             vars["--ps-nav-font"]       = `"${style.nav_font}", sans-serif`;
+  if (style.nav_font_size)        vars["--ps-nav-font-size"]  = `${style.nav_font_size}px`;
+  return vars;
+}
+
+/**
+ * Build Google Fonts URL for the selected fonts (if they are actual font names,
+ * not CSS variable references).
+ */
+export function buildGoogleFontsUrl(style: PageStyle): string | null {
+  const isSystemFont = (f: string | null) =>
+    !f || f.startsWith("var(") || f.startsWith("system") || f === "";
+
+  const fonts = new Set<string>();
+  if (!isSystemFont(style.page_font))    fonts.add(style.page_font!);
+  if (!isSystemFont(style.heading_font)) fonts.add(style.heading_font!);
+  if (!isSystemFont(style.nav_font))     fonts.add(style.nav_font!);
+
+  if (fonts.size === 0) return null;
+
+  const families = Array.from(fonts)
+    .map((f) => `family=${encodeURIComponent(f)}:wght@300;400;500;600;700;800`)
+    .join("&");
+  return `https://fonts.googleapis.com/css2?${families}&display=swap`;
 }
 
 // ─── Age calculation ──────────────────────────────────────────────────────────

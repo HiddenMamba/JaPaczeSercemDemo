@@ -7,7 +7,7 @@ const TYPE_CONFIG = {
   info:         { icon: "ℹ️",  color: "border-blue-200 bg-blue-50" },
   account:      { icon: "🏦",  color: "border-green-200 bg-green-50" },
   link:         { icon: "🔗",  color: "border-purple-200 bg-purple-50" },
-  crowdfunding: { icon: "❤️",  color: "border-brand-200 bg-brand-50" },
+  crowdfunding: { icon: "❤️",  color: "border-ps-muted bg-ps-soft" },
 };
 
 export default async function WesprzyJNasPage() {
@@ -32,7 +32,7 @@ export default async function WesprzyJNasPage() {
       )}
 
       {methods.length === 0 ? (
-        <div className="bg-brand-50 rounded-2xl p-8 border border-brand-100 text-center">
+        <div className="rounded-2xl p-8 border text-center" style={{ backgroundColor: "var(--ps-primary-soft,#fff8f4)", borderColor: "var(--ps-primary-muted,#ffe8db)" }}>
           <p className="text-4xl mb-3">🐱</p>
           <p className="text-gray-700 font-medium mb-2">Szczegóły dotyczące wsparcia zostaną wkrótce dodane.</p>
           <p className="text-gray-500 text-sm">
@@ -79,7 +79,7 @@ export default async function WesprzyJNasPage() {
       )}
 
       {/* Thank you note */}
-      <div className="mt-12 text-center p-8 bg-brand-50 rounded-2xl">
+      <div className="mt-12 text-center p-8 rounded-2xl" style={{ backgroundColor: "var(--ps-primary-soft,#fff8f4)" }}>
         <p className="text-2xl mb-2">🐾</p>
         <p className="text-gray-700 font-medium">Dziękujemy za każde wsparcie!</p>
         <p className="text-gray-500 text-sm mt-1">
