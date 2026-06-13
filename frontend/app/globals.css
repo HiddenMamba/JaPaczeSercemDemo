@@ -5,17 +5,6 @@
  * Page Style CSS custom properties – set dynamically from Directus page_style
  * collection via inline style on <html>. These are the fallback defaults that
  * match the existing design when no page_style is configured.
- *
- * Variables:
- *   --ps-primary        Main brand colour (buttons, CTAs, active chips)
- *   --ps-secondary      Soft surface colour (section backgrounds)
- *   --ps-accent         Hover/border accent
- *   --ps-bg             Page background
- *   --ps-text           Body text colour
- *   --ps-nav-bg         Navbar background
- *   --ps-footer-bg      Footer background
- *   --ps-font           Body font-family (Google Font name)
- *   --ps-heading-font   Heading font-family (falls back to --ps-font)
  */
 :root {
   --ps-primary:      #eb5e28;
@@ -30,11 +19,7 @@
   --ps-text:         #111827;
   --ps-nav-bg:       #ffffff;
   --ps-footer-bg:    #0a0a0a;
-  --ps-font:         inherit;
-  --ps-heading-font: "Amatic SC", sans-serif;
-  --ps-font-size:    16px;
-  --ps-nav-font:     var(--ps-font, inherit); /* falls back to body font */
-  --ps-nav-font-size: 14px;
+  --ps-base-font-size: 16px;
 }
 
 /*
@@ -65,22 +50,13 @@
     @apply antialiased;
     background-color: var(--ps-bg, #ffffff);
     color: var(--ps-text, #111827);
-    font-family: var(--ps-font, var(--font-geist-sans, system-ui, sans-serif));
-    font-size: var(--ps-font-size, 16px);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: var(--ps-base-font-size, 16px);
+    line-height: 1.6;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--ps-heading-font, "Amatic SC", sans-serif);
-    /* Explicitly use rem (relative to html root 16px) so heading sizes
-       are never affected by body or nav font-size changes */
-    line-height: 1.2;
+    font-family: var(--font-amatic-sc), sans-serif;
   }
-  /* Reset Tailwind heading sizes to rem so they're immune to font-size cascade */
-  h1 { font-size: 2.25rem; }   /* text-4xl */
-  h2 { font-size: 1.875rem; }  /* text-3xl */
-  h3 { font-size: 1.5rem; }    /* text-2xl */
-  h4 { font-size: 1.25rem; }   /* text-xl */
-  h5 { font-size: 1.125rem; }  /* text-lg */
-  h6 { font-size: 1rem; }      /* text-base */
 }
 
 @layer components {
@@ -104,9 +80,6 @@
   }
   .badge-inTreatment {
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800;
-  }
-  .badge-reserved {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800;
   }
   .badge-adopted {
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-600;
@@ -142,18 +115,9 @@
     color: var(--ps-primary-dark, var(--ps-accent, #c44e20));
   }
 
-  /* Navbar — transparent glass effect; overridden by custom nav colour from CMS.
-     font-size is scoped only here so it never leaks to headings or body. */
+  /* Navbar — transparent glass effect; overridden by custom nav colour from CMS */
   .nav-header {
     background-color: var(--ps-nav-bg, rgba(255,255,255,0.95));
-    font-family: var(--ps-nav-font, var(--ps-font, inherit));
-    font-size: var(--ps-nav-font-size, 14px);
-  }
-  /* Ensure nav links inside the header respect the nav font size */
-  .nav-header a,
-  .nav-header button,
-  .nav-header span {
-    font-size: inherit;
   }
 
   /* Active nav link — soft tint of primary colour */
@@ -170,5 +134,41 @@
   /* Document list row hover — CSS-only */
   .doc-list-row:hover {
     background-color: var(--ps-primary-soft, #fff8f4);
+  }
+
+  .forever-home-marquee {
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  }
+
+  .forever-home-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: forever-home-marquee var(--forever-home-duration, 45s) linear infinite;
+    will-change: transform;
+  }
+
+  .forever-home-marquee:hover .forever-home-marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes forever-home-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(var(--forever-home-shift, -50%));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forever-home-marquee {
+    overflow-x: auto;
+    mask-image: none;
+  }
+
+  .forever-home-marquee-track {
+    animation: none;
   }
 }

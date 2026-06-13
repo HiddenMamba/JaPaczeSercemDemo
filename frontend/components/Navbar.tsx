@@ -40,7 +40,9 @@ export function Navbar({ menuItems, siteName, logoUrl }: Props) {
           ) : (
             <span className="text-2xl">🐱</span>
           )}
-          <span style={{ color: "var(--ps-primary)" }}>{siteName}</span>
+          <span className="text-2xl font-bold" style={{ color: "var(--ps-primary)", fontFamily: "var(--font-amatic-sc), sans-serif" }}>
+            {siteName}
+          </span>
         </Link>
 
         {/* Desktop nav */}

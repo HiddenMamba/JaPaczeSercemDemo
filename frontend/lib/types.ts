@@ -33,6 +33,7 @@ export interface Cat {
   story: string | null;
   photos: { directus_files_id: DirectusFile }[];
   traits: { cat_traits_id: CatTrait }[];
+  forever_home_photos?: ForeverHomePhoto[];
 }
 
 export interface NewsArticle {
@@ -60,11 +61,7 @@ export interface PageStyle {
   text_color: string | null;
   nav_background_color: string | null;
   footer_background_color: string | null;
-  page_font: string | null;
-  heading_font: string | null;
-  base_font_size: string | null;
-  nav_font: string | null;
-  nav_font_size: string | null;
+  base_font_size: number | null;
 }
 
 export interface Document {
@@ -93,6 +90,18 @@ export interface SocialLink {
   image: { id: string } | string | null;
 }
 
+export interface ForeverHomePhoto {
+  id: string;
+  caption: string | null;
+  published_at: string | null;
+  photo: DirectusFile;
+  cat: {
+    id: string;
+    slug: string;
+    name: string;
+  } | null;
+}
+
 // ─── Resolved types (same structure, kept for compatibility) ──────────────────
 
 export interface CatResolved {
@@ -109,6 +118,7 @@ export interface CatResolved {
   status: CatStatus;
   category: Cat["category"];
   photos: DirectusFile[];
+  forever_home_photos: ForeverHomePhoto[];
   traits: { id: string; label: string; icon: string | null }[];
 }
 

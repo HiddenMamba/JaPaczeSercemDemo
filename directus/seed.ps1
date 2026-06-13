@@ -47,8 +47,7 @@ function Invoke-PatchSingleton($collection, $data) {
 
 Write-Host "`n=== Page Style ==="
 Invoke-PatchSingleton page_style @{
-  page_font              = "Amatic SC"
-  heading_font           = $null
+  base_font_size         = 16
   primary_color          = $null
   secondary_color        = $null
   accent_color           = $null
@@ -117,12 +116,34 @@ Write-Host "`n=== Demo Cats ==="
   }
 ) | ForEach-Object { Invoke-PostIfEmpty cats $_ }
 
+Write-Host "`n=== Forever Home Photos ==="
+$foreverHomeCount = Invoke-RestMethod -Uri "$DirectusUrl/items/forever_home_photos?aggregate[count]=id&limit=1" -Headers $headers
+$foreverHomeItems = $foreverHomeCount.data[0].count.id
+if ([string]$foreverHomeItems -eq "0" -or -not $foreverHomeItems) {
+  @(
+    @{
+      caption = "Pierwszy wpis do uzupelnienia po dodaniu zdjecia"
+      published_at = $null
+      cat = $null
+      photo = $null
+    },
+    @{
+      caption = "Drugi wpis do uzupelnienia po dodaniu zdjecia"
+      published_at = $null
+      cat = $null
+      photo = $null
+    }
+  ) | ForEach-Object { Invoke-Post forever_home_photos $_ }
+} else {
+  Write-Host "   ~ forever_home_photos (skipped - already has data)"
+}
+
 Write-Host "`n=== Public read (cats, files) ==="
 try {
   $roles = Invoke-RestMethod -Uri "$DirectusUrl/roles?filter[name][_eq]=Public&fields=id" -Headers $headers
   $publicRole = $roles.data[0].id
   if ($publicRole) {
-    foreach ($col in @("directus_files", "cats", "cats_files", "cats_traits", "cat_traits", "news", "pages", "menu_items", "social_links", "site_settings", "adoption_questions", "support_methods")) {
+    foreach ($col in @("directus_files", "cats", "cats_files", "cats_traits", "cat_traits", "forever_home_photos", "news", "pages", "menu_items", "social_links", "site_settings", "adoption_questions", "support_methods")) {
       try {
         Invoke-RestMethod -Uri "$DirectusUrl/permissions" -Method POST -Headers $headers -ContentType "application/json" `
           -Body (@{ role = $publicRole; collection = $col; action = "read"; fields = @("*") } | ConvertTo-Json) | Out-Null

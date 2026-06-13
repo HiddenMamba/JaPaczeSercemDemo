@@ -41,6 +41,15 @@ pf() {
   echo "   $OK $1.$2 → $3"
 }
 
+patch_choices() {
+  RESULT=$(curl -s -X PATCH "$DIRECTUS_URL/fields/$1/$2" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"meta\":{\"display\":\"labels\",\"options\":$3}}")
+  OK=$(echo $RESULT | python3 -c "import sys,json; d=json.load(sys.stdin); print('✓' if 'data' in d else '✗')" 2>/dev/null)
+  echo "   $OK $1.$2 choices"
+}
+
 echo "=== cats ==="
 pf cats name "Imie"
 pf cats slug "URL (slug)"
@@ -52,6 +61,9 @@ pf cats description "Opis"
 pf cats story "Historia"
 pf cats photos "Zdjecia"
 pf cats traits "Cechy szczegolne"
+patch_choices cats status '{"choices":[{"text":"Dostępny","value":"available"},{"text":"W trakcie leczenia","value":"inTreatment"},{"text":"Adoptowany","value":"adopted"},{"text":"Za tęczowym mostem","value":"rainbow"}]}'
+patch_choices cats category '{"choices":[{"text":"Kocię","value":"kitten"},{"text":"Dorosły","value":"adult"},{"text":"Senior","value":"senior"}]}'
+patch_choices cats gender '{"choices":[{"text":"Samiec","value":"male"},{"text":"Samica","value":"female"},{"text":"Nieznana","value":"unknown"}]}'
 
 echo "=== cat_traits ==="
 pf cat_traits label "Nazwa cechy"
@@ -92,6 +104,7 @@ pf site_settings tagline "Slogan"
 pf site_settings banner_enabled "Banner wlaczony"
 pf site_settings banner_text "Tekst bannera"
 pf site_settings banner_color "Kolor bannera"
+pf site_settings not_found_image "Obrazek strony 404"
 pf site_settings founded_year "Rok zalozenia"
 pf site_settings cats_adopted_before_website "Koty adoptowane przed strona"
 pf site_settings contact_form_enabled "Formularz kontaktowy wlaczony"
@@ -126,6 +139,12 @@ pf support_methods icon "Ikona (emoji)"
 pf support_methods order "Kolejnosc"
 pf support_methods active "Aktywny"
 
+echo "=== forever_home_photos ==="
+pf forever_home_photos cat "Kot"
+pf forever_home_photos photo "Zdjecie"
+pf forever_home_photos caption "Podpis"
+pf forever_home_photos published_at "Data publikacji"
+
 echo ""
 echo "=== Collection translations ==="
 
@@ -149,6 +168,7 @@ pc "site_settings"      "Ustawienia"        "Ustawienia strony"
 pc "adoption_questions" "Pytanie"           "Pytania adopcyjne"
 pc "partners"           "Partner"           "Partnerzy"
 pc "support_methods"    "Sposob wsparcia"   "Sposoby wsparcia"
+pc "forever_home_photos" "Zdjecie z domu stalego" "Zdjecia z domu stalego"
 pc "page_style"         "Styl strony"       "Styl strony"
 
 echo ""
@@ -160,9 +180,7 @@ pf page_style background_color    "Kolor tla"
 pf page_style text_color          "Kolor tekstu"
 pf page_style nav_background_color "Kolor tla nawigacji"
 pf page_style footer_background_color "Kolor tla stopki"
-pf page_style page_font           "Czcionka strony"
-pf page_style heading_font        "Czcionka naglowkow"
-pf page_style base_font_size      "Rozmiar czcionki (px)"
+pf page_style base_font_size      "Bazowy rozmiar tekstu (px)"
 
 echo ""
 echo "✅ Done!"

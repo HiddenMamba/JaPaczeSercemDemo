@@ -1,15 +1,17 @@
 export const dynamic = "force-dynamic";
 import Link from "next/link";
-import { getCats, getArticles, getHomepageStats, getSiteSettings } from "@/lib/directus";
+import { getCats, getArticles, getForeverHomePhotos, getHomepageStats, getSiteSettings } from "@/lib/directus";
 import { CatCard } from "@/components/CatCard";
 import { NewsCard } from "@/components/NewsCard";
 import { CatRandomizerButton } from "@/components/CatRandomizer";
+import { ForeverHomeStrip } from "@/components/ForeverHomeStrip";
 
 export default async function HomePage() {
-  const [cats, articles, siteSettings] = await Promise.all([
+  const [cats, articles, siteSettings, foreverHomePhotos] = await Promise.all([
     getCats({ status: "available" }),
     getArticles(3),
     getSiteSettings(),
+    getForeverHomePhotos(12),
   ]);
 
   const stats = await getHomepageStats(siteSettings.cats_adopted_before_website);
@@ -91,6 +93,21 @@ export default async function HomePage() {
             </div>
           )}
         </div>
+      </section>
+
+      <section className="section">
+        <div className="flex items-center justify-between gap-4 mb-8">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Koty w domach stałych</h2>
+            <p className="text-sm text-gray-500 mt-1">
+              Najnowsze zdjęcia naszych podopiecznych, które już są u siebie.
+            </p>
+          </div>
+          <Link href="/koty-w-domach-stalych" className="link-accent text-sm">
+            Wszystkie zdjęcia →
+          </Link>
+        </div>
+        <ForeverHomeStrip photos={foreverHomePhotos} />
       </section>
 
       {/* ── Latest News ── */}

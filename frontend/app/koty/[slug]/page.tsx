@@ -86,6 +86,22 @@ export default async function CatPage({ params }: Props) {
           )}
         </div>
       </div>
+
+      {cat.status === "adopted" && cat.forever_home_photos.length > 0 && (
+        <section className="mt-14">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Zdjęcia z domu stałego</h2>
+            <p className="text-gray-500 mt-2">
+              Zobacz, jak {cat.name} odnalazł się już w swoim nowym domu.
+            </p>
+          </div>
+
+          <CatPhotoGallery
+            photos={cat.forever_home_photos.map((item) => item.photo)}
+            name={`${cat.name} w domu stałym`}
+          />
+        </section>
+      )}
     </div>
   );
 }

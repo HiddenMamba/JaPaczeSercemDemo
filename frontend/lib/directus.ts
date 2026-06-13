@@ -2,6 +2,7 @@ import {
   createDirectus,
   rest,
   readItems,
+  readSingleton,
   staticToken,
 } from "@directus/sdk";
 import type { CatCategory } from "./cat-category";
@@ -14,6 +15,7 @@ import type {
   SocialLink,
   DirectusFile,
   PageStyle,
+  ForeverHomePhoto,
 } from "./types";
 
 // ─── Client ──────────────────────────────────────────────────────────────────
@@ -42,15 +44,35 @@ export function assetUrl(fileId: string, params?: Record<string, string>): strin
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+function resolveDirectusFile(file: unknown): DirectusFile | null {
+  if (file && typeof file === "object" && "id" in file) {
+    return file as DirectusFile;
+  }
+  return null;
+}
+
+function normalizeCatStatus(status: unknown): CatResolved["status"] {
+  if (status === "reserved" || status == null) return "available";
+  if (
+    status === "available"
+    || status === "inTreatment"
+    || status === "adopted"
+    || status === "rainbow"
+  ) {
+    return status;
+  }
+  return "available";
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function resolveCat(cat: any): CatResolved {
   const photos: DirectusFile[] = ((cat.photos as unknown[]) ?? [])
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((p: any) => {
-      if (p?.directus_files_id && typeof p.directus_files_id === "object") {
-        return p.directus_files_id as DirectusFile;
-      }
-      if (p?.id) return p as DirectusFile;
+      const nestedFile = resolveDirectusFile(p?.directus_files_id);
+      if (nestedFile) return nestedFile;
+      const file = resolveDirectusFile(p);
+      if (file) return file;
       return null;
     })
     .filter(Boolean) as DirectusFile[];
@@ -86,10 +108,32 @@ function resolveCat(cat: any): CatResolved {
     age_years: age.years,
     age_months: age.months,
     gender: cat.gender ?? "unknown",
-    status: (cat.status ?? "available") as CatResolved["status"],
+    status: normalizeCatStatus(cat.status),
     category,
     photos,
+    forever_home_photos: [],
     traits,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function resolveForeverHomePhoto(item: any): ForeverHomePhoto | null {
+  const photo = resolveDirectusFile(item?.photo);
+  const cat = item?.cat && typeof item.cat === "object" ? item.cat : null;
+  if (!photo) return null;
+
+  return {
+    id: item.id,
+    caption: item.caption ?? null,
+    published_at: item.published_at ?? null,
+    photo,
+    cat: cat?.id && cat?.slug
+      ? {
+          id: cat.id,
+          slug: cat.slug,
+          name: cat.name ?? cat.slug ?? "Kot",
+        }
+      : null,
   };
 }
 
@@ -137,6 +181,47 @@ const ARTICLE_FIELDS = [
   "cover_image.filename_download",
 ] as const;
 
+const FOREVER_HOME_FIELDS = [
+  "id",
+  "caption",
+  "published_at",
+  "cat.id",
+  "cat.slug",
+  "cat.name",
+  "photo.id",
+  "photo.filename_download",
+  "photo.width",
+  "photo.height",
+] as const;
+
+async function getForeverHomePhotosByCatIds(catIds: string[]): Promise<Map<string, ForeverHomePhoto[]>> {
+  if (catIds.length === 0) return new Map();
+
+  try {
+    const items = await directus.request(
+      readItems("forever_home_photos", {
+        fields: FOREVER_HOME_FIELDS as unknown as string[],
+        filter: { cat: { _in: catIds } },
+        sort: ["-published_at", "-id"],
+        limit: -1,
+      })
+    );
+
+    const grouped = new Map<string, ForeverHomePhoto[]>();
+    for (const item of (items as unknown[])) {
+      const resolved = resolveForeverHomePhoto(item);
+      if (!resolved) continue;
+      if (!resolved.cat) continue;
+      const existing = grouped.get(resolved.cat.id) ?? [];
+      existing.push(resolved);
+      grouped.set(resolved.cat.id, existing);
+    }
+    return grouped;
+  } catch {
+    return new Map();
+  }
+}
+
 // ─── Cats ─────────────────────────────────────────────────────────────────────
 
 export async function getCats(
@@ -152,7 +237,11 @@ export async function getCats(
   const filter: any = {};
   if (filters?.category) filter.category = { _eq: filters.category };
   if (filters?.gender) filter.gender = { _eq: filters.gender };
-  if (filters?.status) filter.status = { _eq: filters.status };
+  if (filters?.status === "available") {
+    filter.status = { _in: ["available", "reserved"] };
+  } else if (filters?.status) {
+    filter.status = { _eq: filters.status };
+  }
   if (filters?.traits?.length) {
     filter.traits = { cat_traits_id: { id: { _in: filters.traits } } };
   }
@@ -174,7 +263,13 @@ export async function getCats(
       limit: -1,
     })
   );
-  return (cats as unknown as Cat[]).map((c) => resolveCat(c));
+  const resolvedCats = (cats as unknown as Cat[]).map((c) => resolveCat(c));
+  const foreverHomePhotos = await getForeverHomePhotosByCatIds(resolvedCats.map((cat) => cat.id));
+
+  return resolvedCats.map((cat) => ({
+    ...cat,
+    forever_home_photos: foreverHomePhotos.get(cat.id) ?? [],
+  }));
 }
 
 export async function getCat(slug: string): Promise<CatResolved | null> {
@@ -186,7 +281,14 @@ export async function getCat(slug: string): Promise<CatResolved | null> {
     })
   );
   const cat = (cats as unknown as Cat[])[0];
-  return cat ? resolveCat(cat) : null;
+  if (!cat) return null;
+
+  const resolvedCat = resolveCat(cat);
+  const foreverHomePhotos = await getForeverHomePhotosByCatIds([resolvedCat.id]);
+  return {
+    ...resolvedCat,
+    forever_home_photos: foreverHomePhotos.get(resolvedCat.id) ?? [],
+  };
 }
 
 export async function getRandomCat(): Promise<CatResolved | null> {
@@ -368,7 +470,7 @@ export async function getHomepageStats(catsAdoptedBeforeWebsite: number): Promis
   try {
     const [availableRes, adoptedRes] = await Promise.all([
       directus.request(readItems("cats", {
-        filter: { status: { _eq: "available" } },
+        filter: { status: { _in: ["available", "reserved"] } },
         aggregate: { count: ["id"] },
         limit: 1,
       })),
@@ -385,6 +487,24 @@ export async function getHomepageStats(catsAdoptedBeforeWebsite: number): Promis
     return { available, adopted: adoptedOnSite + catsAdoptedBeforeWebsite };
   } catch {
     return { available: 0, adopted: catsAdoptedBeforeWebsite };
+  }
+}
+
+export async function getForeverHomePhotos(limit = 12): Promise<ForeverHomePhoto[]> {
+  try {
+    const items = await directus.request(
+      readItems("forever_home_photos", {
+        fields: FOREVER_HOME_FIELDS as unknown as string[],
+        sort: ["-published_at", "-id"],
+        limit,
+      })
+    );
+
+    return (items as unknown[])
+      .map((item) => resolveForeverHomePhoto(item))
+      .filter(Boolean) as ForeverHomePhoto[];
+  } catch {
+    return [];
   }
 }
 
@@ -479,6 +599,7 @@ export interface SiteSettings {
   banner_text: string | null;
   banner_color: string;
   banner_image: { id: string; width?: number; height?: number } | null;
+  not_found_image: DirectusFile | null;
   founded_year: number | null;
   cats_adopted_before_website: number;
   contact_form_enabled: boolean;
@@ -495,6 +616,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     banner_text: null,
     banner_color: "orange",
     banner_image: null,
+    not_found_image: null,
     founded_year: null,
     cats_adopted_before_website: 0,
     contact_form_enabled: true,
@@ -502,20 +624,19 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     contact_email: null,
   };
   try {
-    const result = await directus.request(
-      readItems("site_settings", {
-        fields: [
-          "site_name", "tagline", "banner_enabled", "banner_text", "banner_color",
-          "founded_year", "cats_adopted_before_website",
-          "contact_form_enabled", "contact_email_visible", "contact_email",
-          "logo.id", "logo.width", "logo.height", "logo.filename_download",
-          "banner_image.id", "banner_image.width", "banner_image.height",
-        ],
-        limit: 1,
-      })
-    );
+    // site_settings is a singleton — use readSingleton
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const s = Array.isArray(result) ? (result as any[])[0] : result as any;
+    const s = await directus.request(readSingleton("site_settings" as any, {
+      fields: [
+        "site_name", "tagline", "banner_enabled", "banner_text", "banner_color",
+        "founded_year", "cats_adopted_before_website",
+        "contact_form_enabled", "contact_email_visible", "contact_email",
+        "logo.id", "logo.width", "logo.height", "logo.filename_download",
+        "banner_image.id", "banner_image.width", "banner_image.height",
+        "not_found_image.id", "not_found_image.width", "not_found_image.height", "not_found_image.filename_download",
+      ],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    })) as any;
     if (!s) return defaults;
     return {
       site_name: s.site_name ?? defaults.site_name,
@@ -530,6 +651,11 @@ export async function getSiteSettings(): Promise<SiteSettings> {
         ? s.banner_image
         : s.banner_image && typeof s.banner_image === "string"
         ? { id: s.banner_image }
+        : null,
+      not_found_image: s.not_found_image && typeof s.not_found_image === "object" && s.not_found_image.id
+        ? s.not_found_image
+        : s.not_found_image && typeof s.not_found_image === "string"
+        ? { id: s.not_found_image } as DirectusFile
         : null,
       founded_year: s.founded_year ?? null,
       cats_adopted_before_website: Number(s.cats_adopted_before_website ?? 0),
@@ -555,29 +681,22 @@ export const PAGE_STYLE_DEFAULTS: PageStyle = {
   text_color: null,
   nav_background_color: null,
   footer_background_color: null,
-  page_font: null,
-  heading_font: "Amatic SC",
-  base_font_size: "16",
-  nav_font: null,
-  nav_font_size: "14",
+  base_font_size: null,
 };
 
 export async function getPageStyle(): Promise<PageStyle> {
   try {
-    const result = await directus.request(
-      readItems("page_style", {
-        fields: [
-          "primary_color", "secondary_color", "accent_color",
-          "background_color", "text_color",
-          "nav_background_color", "footer_background_color",
-          "page_font", "heading_font", "base_font_size",
-          "nav_font", "nav_font_size",
-        ],
-        limit: 1,
-      })
-    );
+    // page_style is a singleton — use readSingleton, not readItems
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const s = Array.isArray(result) ? (result as any[])[0] : (result as any);
+    const s = await directus.request(readSingleton("page_style" as any, {
+      fields: [
+        "primary_color", "secondary_color", "accent_color",
+        "background_color", "text_color",
+        "nav_background_color", "footer_background_color",
+        "base_font_size",
+      ],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    })) as any;
     if (!s) return PAGE_STYLE_DEFAULTS;
     return {
       primary_color: s.primary_color ?? null,
@@ -587,11 +706,7 @@ export async function getPageStyle(): Promise<PageStyle> {
       text_color: s.text_color ?? null,
       nav_background_color: s.nav_background_color ?? null,
       footer_background_color: s.footer_background_color ?? null,
-      page_font: s.page_font ?? null,
-      heading_font: s.heading_font ?? "Amatic SC",
-      base_font_size: s.base_font_size ?? "16",
-      nav_font: s.nav_font ?? null,
-      nav_font_size: s.nav_font_size ?? "14",
+      base_font_size: Number.isFinite(Number(s.base_font_size)) ? Number(s.base_font_size) : null,
     };
   } catch (e) {
     console.error("getPageStyle error:", e);
@@ -642,35 +757,10 @@ export function buildStyleVars(style: PageStyle): Record<string, string> {
   if (style.text_color)           vars["--ps-text"]           = style.text_color;
   if (style.nav_background_color) vars["--ps-nav-bg"]         = style.nav_background_color;
   if (style.footer_background_color) vars["--ps-footer-bg"]   = style.footer_background_color;
-  if (style.page_font)            vars["--ps-font"]           = `"${style.page_font}", sans-serif`;
-  if (style.heading_font)         vars["--ps-heading-font"]   = `"${style.heading_font}", sans-serif`;
-  if (style.base_font_size)       vars["--ps-font-size"]      = `${style.base_font_size}px`;
-  // Nav font falls back to page_font if not set (empty string = use page font)
-  if (style.nav_font)             vars["--ps-nav-font"]       = `"${style.nav_font}", sans-serif`;
-  if (style.nav_font_size)        vars["--ps-nav-font-size"]  = `${style.nav_font_size}px`;
+  if (style.base_font_size)       vars["--ps-base-font-size"] = `${style.base_font_size}px`;
   return vars;
 }
 
-/**
- * Build Google Fonts URL for the selected fonts (if they are actual font names,
- * not CSS variable references).
- */
-export function buildGoogleFontsUrl(style: PageStyle): string | null {
-  const isSystemFont = (f: string | null) =>
-    !f || f.startsWith("var(") || f.startsWith("system") || f === "";
-
-  const fonts = new Set<string>();
-  if (!isSystemFont(style.page_font))    fonts.add(style.page_font!);
-  if (!isSystemFont(style.heading_font)) fonts.add(style.heading_font!);
-  if (!isSystemFont(style.nav_font))     fonts.add(style.nav_font!);
-
-  if (fonts.size === 0) return null;
-
-  const families = Array.from(fonts)
-    .map((f) => `family=${encodeURIComponent(f)}:wght@300;400;500;600;700;800`)
-    .join("&");
-  return `https://fonts.googleapis.com/css2?${families}&display=swap`;
-}
 
 // ─── Age calculation ──────────────────────────────────────────────────────────
 

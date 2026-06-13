@@ -1,12 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, type ReactNode } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, type CSSProperties, type ReactNode } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { assetUrl } from "@/lib/directus";
 
 interface Photo {
   id: string;
+  alt?: string | null;
+  title?: string | null;
+  href?: string | null;
 }
 
 interface Props {
@@ -14,13 +18,15 @@ interface Props {
   alt: string;
   index: number | null;
   onIndexChange: (index: number | null) => void;
+  showTitle?: boolean;
 }
 
-export function ImageLightbox({ photos, alt, index, onIndexChange }: Props) {
+export function ImageLightbox({ photos, alt, index, onIndexChange, showTitle = false }: Props) {
   const open = index !== null && photos.length > 0;
   const currentIndex = open ? index! : 0;
   const current = open ? photos[currentIndex] : null;
   const hasMultiple = photos.length > 1;
+  const currentAlt = current?.alt ?? alt;
 
   const close = useCallback(() => onIndexChange(null), [onIndexChange]);
 
@@ -66,13 +72,29 @@ export function ImageLightbox({ photos, alt, index, onIndexChange }: Props) {
           <motion.div
             role="dialog"
             aria-modal="true"
-            aria-label={`Zdjęcie ${currentIndex + 1} z ${photos.length}: ${alt}`}
+            aria-label={`Zdjęcie ${currentIndex + 1} z ${photos.length}: ${currentAlt}`}
             className="fixed inset-0 z-[60] flex flex-col items-center justify-center p-4 pointer-events-none"
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.2 }}
           >
+            {showTitle && current?.title && (
+              <div className="pointer-events-auto absolute top-4 left-1/2 -translate-x-1/2 max-w-[calc(100%-7rem)] text-center">
+                {current.href ? (
+                  <Link
+                    href={current.href}
+                    className="text-white text-lg sm:text-xl font-semibold underline-offset-4 hover:underline"
+                    onClick={close}
+                  >
+                    {current.title}
+                  </Link>
+                ) : (
+                  <p className="text-white text-lg sm:text-xl font-semibold">{current.title}</p>
+                )}
+              </div>
+            )}
+
             <button
               type="button"
               onClick={close}
@@ -116,7 +138,7 @@ export function ImageLightbox({ photos, alt, index, onIndexChange }: Props) {
               <Image
                 key={current.id}
                 src={assetUrl(current.id)}
-                alt={alt}
+                alt={currentAlt}
                 fill
                 className="object-contain"
                 sizes="100vw"
@@ -158,7 +180,7 @@ export function LightboxTrigger({
         onOpen();
       }}
       className={`group/lightbox relative block w-full h-full cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${className}`}
-      style={{ "--tw-ring-color": "var(--ps-primary)" } as React.CSSProperties}
+      style={{ "--tw-ring-color": "var(--ps-primary)" } as CSSProperties}
       aria-label="Powiększ zdjęcie"
     >
       {children}

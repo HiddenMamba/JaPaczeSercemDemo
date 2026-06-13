@@ -44,58 +44,8 @@ ok "Authenticated as $EMAIL"
 
 api() { curl -s -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" "$@"; }
 
-# ── Shared font choices list ──────────────────────────────────────────────────
-FONT_CHOICES='[
-  {"text":"(taka sama jak czcionka strony)","value":""},
-  {"text":"Amatic SC","value":"Amatic SC"},
-  {"text":"Lato","value":"Lato"},
-  {"text":"Roboto","value":"Roboto"},
-  {"text":"Open Sans","value":"Open Sans"},
-  {"text":"Nunito","value":"Nunito"},
-  {"text":"Playfair Display","value":"Playfair Display"},
-  {"text":"Merriweather","value":"Merriweather"},
-  {"text":"Montserrat","value":"Montserrat"},
-  {"text":"Poppins","value":"Poppins"},
-  {"text":"Raleway","value":"Raleway"},
-  {"text":"Dancing Script","value":"Dancing Script"},
-  {"text":"Pacifico","value":"Pacifico"},
-  {"text":"Lobster","value":"Lobster"},
-  {"text":"Quicksand","value":"Quicksand"},
-  {"text":"Josefin Sans","value":"Josefin Sans"},
-  {"text":"Caveat","value":"Caveat"},
-  {"text":"Permanent Marker","value":"Permanent Marker"},
-  {"text":"Comfortaa","value":"Comfortaa"},
-  {"text":"Ubuntu","value":"Ubuntu"},
-  {"text":"Inter","value":"Inter"},
-  {"text":"DM Sans","value":"DM Sans"},
-  {"text":"Outfit","value":"Outfit"},
-  {"text":"Libre Baskerville","value":"Libre Baskerville"},
-  {"text":"Source Serif 4","value":"Source Serif 4"}
-]'
-
-SIZE_CHOICES='[
-  {"text":"12px – bardzo mały","value":"12"},
-  {"text":"13px – mały","value":"13"},
-  {"text":"14px – trochę mały","value":"14"},
-  {"text":"15px – prawie domyślny","value":"15"},
-  {"text":"16px – domyślny (zalecany)","value":"16"},
-  {"text":"17px – trochę większy","value":"17"},
-  {"text":"18px – większy","value":"18"},
-  {"text":"19px – duży","value":"19"},
-  {"text":"20px – bardzo duży","value":"20"},
-  {"text":"22px – ekstra duży","value":"22"},
-  {"text":"24px – maksymalny","value":"24"}
-]'
-
-NAV_SIZE_CHOICES='[
-  {"text":"12px","value":"12"},
-  {"text":"13px","value":"13"},
-  {"text":"14px – domyślny","value":"14"},
-  {"text":"15px","value":"15"},
-  {"text":"16px","value":"16"},
-  {"text":"17px","value":"17"},
-  {"text":"18px","value":"18"}
-]'
+# Headings now always use Amatic SC in the frontend. Directus only controls the
+# base body text size via page_style.base_font_size.
 
 EMOJI_CHOICES='[
   {"text":"🐾 Ogólne","value":"🐾"},{"text":"❤️ Łagodny","value":"❤️"},
@@ -138,6 +88,27 @@ add_field() {
   fi
 }
 
+delete_field() {
+  local COLLECTION="$1"
+  local FIELD="$2"
+
+  EXISTS=$(api "$BASE_URL/fields/$COLLECTION/$FIELD" \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); print('yes' if 'data' in d else 'no')" 2>/dev/null)
+
+  if [ "$EXISTS" != "yes" ]; then
+    warn "$COLLECTION.$FIELD already removed"
+    return
+  fi
+
+  RESULT=$(api -X DELETE "$BASE_URL/fields/$COLLECTION/$FIELD")
+  if [ -z "$RESULT" ] || echo "$RESULT" | python3 -c "import sys,json; import sys as _s; txt=_s.stdin.read().strip(); exit(0 if txt in ('', 'null') else (0 if json.loads(txt).get('data') is not None else 1))" 2>/dev/null; then
+    ok "$COLLECTION.$FIELD removed"
+  else
+    ERR=$(echo "$RESULT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('errors',[{}])[0].get('message','?'))" 2>/dev/null)
+    fail "$COLLECTION.$FIELD failed: $ERR"
+  fi
+}
+
 # ── 1. Create page_style collection ──────────────────────────────────────────
 echo ""
 echo "=== 1. page_style collection ==="
@@ -152,7 +123,7 @@ else
     "collection": "page_style",
     "meta": {
       "icon": "palette",
-      "note": "Styl strony – kolory i czcionka (singleton)",
+      "note": "Styl strony – kolory i podstawowa typografia (singleton)",
       "display_template": "Styl strony",
       "singleton": true,
       "translations": [{"language":"pl-PL","translation":"Styl strony"}]
@@ -206,35 +177,16 @@ add_field "page_style" "footer_background_color" '{
   "meta":{"interface":"select-color","note":"Kolor tła stopki","width":"half",
   "translations":[{"language":"pl-PL","translation":"Kolor tła stopki"}]}}'
 
-add_field "page_style" "page_font" "{
-  \"field\":\"page_font\",\"type\":\"string\",\"schema\":{\"is_nullable\":true},
-  \"meta\":{\"interface\":\"select-dropdown\",\"options\":{\"choices\":$FONT_CHOICES,\"allowOther\":true},
-  \"note\":\"Czcionka strony (Google Fonts). Puste = czcionka systemowa.\",
-  \"translations\":[{\"language\":\"pl-PL\",\"translation\":\"Czcionka strony\"}]}}"
+delete_field "page_style" "page_font"
+delete_field "page_style" "heading_font"
+delete_field "page_style" "nav_font"
 
-add_field "page_style" "heading_font" "{
-  \"field\":\"heading_font\",\"type\":\"string\",\"schema\":{\"is_nullable\":true},
-  \"meta\":{\"interface\":\"select-dropdown\",\"options\":{\"choices\":$FONT_CHOICES,\"allowOther\":true},
-  \"note\":\"Czcionka nagłówków. Puste = taka sama jak czcionka strony.\",
-  \"translations\":[{\"language\":\"pl-PL\",\"translation\":\"Czcionka nagłówków\"}]}}"
+add_field "page_style" "base_font_size" '{
+  "field":"base_font_size","type":"integer","schema":{"is_nullable":true,"default_value":16},
+  "meta":{"interface":"input-integer",
+  "note":"Bazowy rozmiar tekstu strony w px (nagłówki pozostają w Amatic SC).","width":"half",
+  "translations":[{"language":"pl-PL","translation":"Bazowy rozmiar tekstu (px)"}]}}'
 
-add_field "page_style" "base_font_size" "{
-  \"field\":\"base_font_size\",\"type\":\"string\",\"schema\":{\"is_nullable\":true,\"default_value\":\"16\"},
-  \"meta\":{\"interface\":\"select-dropdown\",\"options\":{\"choices\":$SIZE_CHOICES,\"allowOther\":false},
-  \"note\":\"Rozmiar czcionki strony w px (domyślnie: 16px).\",\"width\":\"half\",
-  \"translations\":[{\"language\":\"pl-PL\",\"translation\":\"Rozmiar czcionki (px)\"}]}}"
-
-add_field "page_style" "nav_font" "{
-  \"field\":\"nav_font\",\"type\":\"string\",\"schema\":{\"is_nullable\":true},
-  \"meta\":{\"interface\":\"select-dropdown\",\"options\":{\"choices\":$FONT_CHOICES,\"allowOther\":true},
-  \"note\":\"Czcionka nawigacji. Puste = taka sama jak czcionka strony.\",\"width\":\"half\",
-  \"translations\":[{\"language\":\"pl-PL\",\"translation\":\"Czcionka nawigacji\"}]}}"
-
-add_field "page_style" "nav_font_size" "{
-  \"field\":\"nav_font_size\",\"type\":\"string\",\"schema\":{\"is_nullable\":true,\"default_value\":\"14\"},
-  \"meta\":{\"interface\":\"select-dropdown\",\"options\":{\"choices\":$NAV_SIZE_CHOICES,\"allowOther\":false},
-  \"note\":\"Rozmiar czcionki nawigacji w px (domyślnie: 14px).\",\"width\":\"half\",
-  \"translations\":[{\"language\":\"pl-PL\",\"translation\":\"Rozmiar czcionki nawigacji (px)\"}]}}"
 
 # ── 3. Seed page_style singleton with defaults ────────────────────────────────
 echo ""
@@ -253,9 +205,7 @@ if [ "$HAS_DATA" = "exists" ]; then
   warn "page_style record already exists — skipping seed"
 else
   RESULT=$(api -X PATCH "$BASE_URL/items/page_style" -d '{
-    "heading_font": "Amatic SC",
-    "base_font_size": "16",
-    "nav_font_size": "14"
+    "base_font_size": 16
   }')
   if echo "$RESULT" | python3 -c "import sys,json; d=json.load(sys.stdin); exit(0 if 'data' in d else 1)" 2>/dev/null; then
     ok "page_style defaults seeded"
@@ -321,4 +271,4 @@ echo "  cat_traits.icon now shows emoji picker"
 echo ""
 echo "  Next steps:"
 echo "  1. Deploy your updated frontend (Vercel will auto-deploy from git)"
-echo "  2. Go to Directus admin → Styl strony to set colours and fonts"
+echo "  2. Go to Directus admin → Styl strony to set colours and base text size"

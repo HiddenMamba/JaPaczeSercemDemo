@@ -36,7 +36,6 @@
     "gender_unknown": "Unknown",
     "status_available": "Available",
     "status_inTreatment": "In treatment",
-    "status_reserved": "Reserved",
     "status_adopted": "Adopted",
     "age_years": "{years, plural, one {# year} other {# years}}",
     "age_months": "{months, plural, one {# month} other {# months}}",

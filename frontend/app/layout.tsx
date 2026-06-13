@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
+import { Amatic_SC } from "next/font/google";
 import "./globals.css";
-import { getMenuItems, getSocialLinks, getSiteSettings, getPageStyle, buildStyleVars, buildGoogleFontsUrl, assetUrl } from "@/lib/directus";
+import { getMenuItems, getSocialLinks, getSiteSettings, getPageStyle, buildStyleVars, assetUrl } from "@/lib/directus";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SiteBanner } from "@/components/SiteBanner";
 
 export const dynamic = "force-dynamic";
+
+const amaticSc = Amatic_SC({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-amatic-sc",
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -31,20 +38,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   ]);
   const logoUrl = siteSettings.logo ? assetUrl(siteSettings.logo.id) : null;
   const styleVars = buildStyleVars(pageStyle);
-  const googleFontsUrl = buildGoogleFontsUrl(pageStyle);
+
+  // Inject CSS vars as a <style> block so they apply before first paint (no flash)
+  const cssVarBlock = Object.entries(styleVars).length > 0
+    ? `:root{${Object.entries(styleVars).map(([k, v]) => `${k}:${v}`).join(";")}}`
+    : "";
 
   return (
-    <html lang="pl" style={styleVars as React.CSSProperties}>
+    <html lang="pl">
       <head>
-        {googleFontsUrl && (
-          <>
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-            <link rel="stylesheet" href={googleFontsUrl} />
-          </>
+        {cssVarBlock && (
+          <style dangerouslySetInnerHTML={{ __html: cssVarBlock }} />
         )}
       </head>
-      <body>
+      <body className={amaticSc.variable}>
         <div className="min-h-screen flex flex-col bg-[var(--ps-bg,#ffffff)] text-[var(--ps-text,#111827)] antialiased">
           <a
             href="#main-content"

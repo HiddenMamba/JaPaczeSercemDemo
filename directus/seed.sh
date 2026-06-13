@@ -66,7 +66,7 @@ post() {
 post_if_empty() {
   COLLECTION=$1
   DATA=$2
-  COUNT=$(curl -s "$DIRECTUS_URL/items/$COLLECTION?aggregate[count]=id&limit=1" \
+  COUNT=$(curl -g -s "$DIRECTUS_URL/items/$COLLECTION?aggregate[count]=id&limit=1" \
     -H "Authorization: Bearer $TOKEN" \
     | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('data',[{}])[0].get('count',{}).get('id','0'))" 2>/dev/null || echo "0")
   if [ "$COUNT" = "0" ] || [ -z "$COUNT" ]; then
@@ -105,8 +105,7 @@ patch_singleton() {
 echo ""
 echo "=== Page Style ==="
 patch_singleton page_style '{
-  "page_font": "Amatic SC",
-  "heading_font": null,
+  "base_font_size": 16,
   "primary_color": null,
   "secondary_color": null,
   "accent_color": null,
@@ -259,7 +258,7 @@ post_if_empty cats '{
 post_if_empty cats '{
   "slug": "zuzia",
   "name": "Zuzia",
-  "status": "reserved",
+  "status": "available",
   "gender": "female",
   "category": "senior",
   "date_of_birth": "2015-09-20",
@@ -287,6 +286,30 @@ post_if_empty cats '{
   "story": null
 }'
 
+# ── Forever Home Photos (placeholders) ────────────────────────────────────────
+echo ""
+echo "=== Forever Home Photos ==="
+FOREVER_HOME_COUNT=$(curl -g -s "$DIRECTUS_URL/items/forever_home_photos?aggregate[count]=id&limit=1" \
+  -H "Authorization: Bearer $TOKEN" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('data',[{}])[0].get('count',{}).get('id',0))" 2>/dev/null)
+
+if [ "${FOREVER_HOME_COUNT:-0}" = "0" ]; then
+  post forever_home_photos '{
+    "caption": "Pierwszy wpis do uzupelnienia po dodaniu zdjecia",
+    "published_at": null,
+    "cat": null,
+    "photo": null
+  }'
+  post forever_home_photos '{
+    "caption": "Drugi wpis do uzupelnienia po dodaniu zdjecia",
+    "published_at": null,
+    "cat": null,
+    "photo": null
+  }'
+else
+  echo "   ~ forever_home_photos (skipped - already has data)"
+fi
+
 # ── Adoption Questions ────────────────────────────────────────────────────────
 echo ""
 echo "=== Adoption Questions ==="
@@ -303,7 +326,7 @@ post_if_empty adoption_questions '{"question":"Dlaczego chcesz adoptowac tego ko
 echo ""
 echo "=== Public file access ==="
 # Get the public role ID
-PUBLIC_ROLE=$(curl -s "$DIRECTUS_URL/roles?filter[name][_eq]=Public&fields=id" \
+PUBLIC_ROLE=$(curl -g -s "$DIRECTUS_URL/roles?filter[name][_eq]=Public&fields=id" \
   -H "Authorization: Bearer $TOKEN" \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['data'][0]['id'])" 2>/dev/null)
 
@@ -328,6 +351,13 @@ if [ -n "$PUBLIC_ROLE" ]; then
     -H "Content-Type: application/json" \
     -d "{\"role\":\"$PUBLIC_ROLE\",\"collection\":\"cats_traits\",\"action\":\"read\",\"fields\":[\"*\"]}" \
     | python3 -c "import sys,json; d=json.load(sys.stdin); print('   ✓ cats_traits public read' if 'data' in d else '   already set or error')" 2>/dev/null
+
+  # Set forever_home_photos public read
+  curl -s -X POST "$DIRECTUS_URL/permissions" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"role\":\"$PUBLIC_ROLE\",\"collection\":\"forever_home_photos\",\"action\":\"read\",\"fields\":[\"*\"]}" \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); print('   ✓ forever_home_photos public read' if 'data' in d else '   already set or error')" 2>/dev/null
 else
   echo "   ⚠ Could not find Public role - set directus_files read access manually in admin"
 fi
@@ -381,6 +411,7 @@ patch_field site_settings tagline "Slogan"
 patch_field site_settings banner_enabled "Banner wlaczony"
 patch_field site_settings banner_text "Tekst bannera"
 patch_field site_settings banner_color "Kolor bannera"
+patch_field site_settings not_found_image "Obrazek strony 404"
 patch_field site_settings founded_year "Rok zalozenia"
 patch_field site_settings cats_adopted_before_website "Koty adoptowane przed strona"
 patch_field site_settings contact_form_enabled "Formularz kontaktowy wlaczony"

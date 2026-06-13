@@ -23,7 +23,8 @@ cat-adoption/
 │   ├── schema-snapshot.json   # Schemat bazy danych (wersjonowany)
 │   ├── seed.sh                # Skrypt seedowania danych
 │   ├── patch-labels.sh        # Skrypt polskich etykiet pól
-│   ├── patch-cat-status.sh    # Dodaje status inTreatment do kotów
+│   ├── patch-cat-status.sh    # Usuwa status reserved i normalizuje stare dane
+│   ├── patch-forever-home-photos.sh # Dodaje kolekcję zdjęć z domu stałego
 │   └── run-render.sh          # Interaktywny runner dla Render
 ├── docker-compose.yml         # Produkcja (VPS)
 ├── docker-compose.dev.yml     # Development lokalny
@@ -315,10 +316,12 @@ bash directus/seed.sh
 
 | Skrypt | Opis |
 |---|---|
-| `bash directus/run-render.sh` | Interaktywny runner (seed lub patch-labels) |
+| `bash directus/run-render.sh` | Interaktywny runner dla seed i patchy Directus |
 | `bash directus/seed.sh` | Seedowanie danych (lokalnie) |
 | `bash directus/patch-labels.sh` | Polskie etykiety pól w Directus |
-| `bash directus/patch-cat-status.sh` | Status „W trakcie leczenia” (`inTreatment`) w Directus |
+| `bash directus/patch-cat-status.sh` | Usuwa `reserved` i ustawia stare koty na `available` |
+| `bash directus/patch-page-style.sh` | Upraszcza `page_style` do kolorów + `base_font_size` |
+| `bash directus/patch-forever-home-photos.sh` | Dodaje kolekcję `forever_home_photos` |
 | `powershell -File directus/patch-cat-status.ps1` | To samo (Windows) |
 
 ---

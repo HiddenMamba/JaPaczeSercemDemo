@@ -123,27 +123,58 @@ add_field_if_missing() {
   fi
 }
 
+delete_field_if_exists() {
+  local COLLECTION="$1"
+  local FIELD="$2"
+
+  EXISTS=$(api "$BASE_URL/fields/$COLLECTION/$FIELD" \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); print('yes' if 'data' in d else 'no')" 2>/dev/null)
+
+  if [ "$EXISTS" != "yes" ]; then
+    warn "$COLLECTION.$FIELD already removed"
+    return
+  fi
+
+  RESULT=$(api -X DELETE "$BASE_URL/fields/$COLLECTION/$FIELD")
+  if [ -z "$RESULT" ] || echo "$RESULT" | python3 -c "import sys,json; import sys as _s; txt=_s.stdin.read().strip(); exit(0 if txt in ('', 'null') else (0 if json.loads(txt).get('data') is not None else 1))" 2>/dev/null; then
+    ok "$COLLECTION.$FIELD removed"
+  else
+    ERR=$(echo "$RESULT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('errors',[{}])[0].get('message','?'))" 2>/dev/null)
+    fail "$COLLECTION.$FIELD: $ERR"
+  fi
+}
+
+# Remove legacy font pickers from older installs.
+delete_field_if_exists "page_style" "page_font"
+delete_field_if_exists "page_style" "heading_font"
+delete_field_if_exists "page_style" "nav_font"
+
 # page_style.base_font_size
 add_field_if_missing "page_style" "base_font_size" '{
   "field": "base_font_size",
-  "type": "string",
-  "schema": { "is_nullable": true, "default_value": "16" },
+  "type": "integer",
+  "schema": { "is_nullable": true, "default_value": 16 },
   "meta": {
-    "interface": "select-dropdown",
-    "options": { "choices": [
-      {"text":"12px \u2013 bardzo ma\u0142y","value":"12"},
-      {"text":"14px \u2013 ma\u0142y","value":"14"},
-      {"text":"15px \u2013 prawie domy\u015blny","value":"15"},
-      {"text":"16px \u2013 domy\u015blny (zalecany)","value":"16"},
-      {"text":"17px \u2013 troch\u0119 wi\u0119kszy","value":"17"},
-      {"text":"18px \u2013 wi\u0119kszy","value":"18"},
-      {"text":"20px \u2013 du\u017cy","value":"20"},
-      {"text":"22px \u2013 ekstra du\u017cy","value":"22"},
-      {"text":"24px \u2013 maksymalny","value":"24"}
-    ], "allowOther": false },
-    "note": "Bazowy rozmiar czcionki strony w px (domy\u015blnie: 16px)",
+    "interface": "input-integer",
+    "note": "Bazowy rozmiar tekstu strony w px (nag\u0142\u00f3wki pozostaj\u0105 w Amatic SC)",
     "width": "half",
-    "translations": [{"language":"pl-PL","translation":"Rozmiar czcionki (px)"}]
+    "translations": [{"language":"pl-PL","translation":"Bazowy rozmiar tekstu (px)"}]
+  }
+}'
+
+# site_settings.not_found_image
+add_field_if_missing "site_settings" "not_found_image" '{
+  "field": "not_found_image",
+  "type": "uuid",
+  "schema": {
+    "is_nullable": true,
+    "foreign_key_table": "directus_files",
+    "foreign_key_column": "id"
+  },
+  "meta": {
+    "interface": "file-image",
+    "note": "Opcjonalny obrazek na stronę 404 - gdy pusty, pozostaje domyślne emoji",
+    "translations": [{"language":"pl-PL","translation":"Obrazek strony 404"}]
   }
 }'
 
@@ -152,7 +183,7 @@ echo ""
 echo "=== 4. Granting public read permissions ==="
 
 COLLECTIONS=(
-  directus_files cats cats_files cats_traits cat_traits
+  directus_files cats cats_files cats_traits cat_traits forever_home_photos
   news pages menu_items social_links site_settings
   adoption_questions support_methods partners documents page_style
 )
@@ -218,9 +249,7 @@ upsert_singleton "site_settings" '{
 }'
 
 upsert_singleton "page_style" '{
-  "heading_font": "Amatic SC",
-  "base_font_size": "16",
-  "nav_font_size": "14"
+  "base_font_size": 16
 }'
 
 # ── Done ──────────────────────────────────────────────────────────────────────
