@@ -84,9 +84,11 @@ Write-Host "`n=== Cat Traits ==="
 ) | ForEach-Object { Invoke-PostIfEmpty cat_traits $_ }
 
 Write-Host "`n=== Menu Items ==="
-Invoke-PostIfEmpty menu_items @{ label = "Strona główna"; url = "/"; order = 1; open_in_new_tab = $false }
-Invoke-PostIfEmpty menu_items @{ label = "Adoptuj kota"; url = "/koty"; order = 2; open_in_new_tab = $false }
-Invoke-PostIfEmpty menu_items @{ label = "Aktualności"; url = "/aktualnosci"; order = 3; open_in_new_tab = $false }
+Invoke-PostIfEmpty menu_items @{ label = "Aktualności"; url = "/aktualnosci"; order = 1; open_in_new_tab = $false }
+Invoke-PostIfEmpty menu_items @{ label = "O nas"; url = "/o-nas"; order = 2; open_in_new_tab = $false }
+Invoke-PostIfEmpty menu_items @{ label = "Kontakt"; url = "/kontakt"; order = 3; open_in_new_tab = $false }
+Invoke-PostIfEmpty menu_items @{ label = "Partnerzy"; url = "/partnerzy"; order = 4; open_in_new_tab = $false }
+Invoke-PostIfEmpty menu_items @{ label = "Wesprzyj nas"; url = "/wesprzyj-nas"; order = 5; open_in_new_tab = $false }
 
 Write-Host "`n=== Demo Cats ==="
 @(

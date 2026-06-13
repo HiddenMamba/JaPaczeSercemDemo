@@ -136,6 +136,41 @@ bash directus/run-render.sh
 
 ---
 
+### Aktualizacja istniejącej instancji Directus
+
+Jeśli frontend jest już wdrożony, a chcesz tylko dodać nowe zmiany w istniejącym CMS, **nie używaj `setup.sh`**. Dla żywej instancji użyj patchy w tej kolejności:
+
+```bash
+bash directus/run-render.sh
+```
+
+1. `4` → `patch-page-style.sh`
+   Aktualizuje `page_style`, usuwa stare font pickery i zostawia `base_font_size`.
+
+2. `3` → `patch-cat-status.sh`
+   Usuwa status `reserved` oraz automatycznie przenosi stare koty na `available`.
+
+3. `5` → `patch-forever-home-photos.sh`
+   Dodaje kolekcję `forever_home_photos` i jej relacje.
+
+4. `6` → `patch-site-settings.sh`
+   Dodaje nowe pole `site_settings.not_found_image` do opcjonalnego obrazka strony 404.
+
+5. `2` → `patch-labels.sh`
+   Odświeża polskie etykiety oraz polskie wartości widoczne w adminie dla `status`, `category`, `gender`.
+
+Po patchach:
+- wdroż nowy frontend z `main` (na przykład Vercel auto-deploy po pushu),
+- dodaj prawdziwe zdjęcia do `forever_home_photos` w Directus, bo rekordy bez pliku nie pokazują się na stronie,
+- opcjonalnie ustaw `Obrazek strony 404` w `Ustawienia strony`.
+
+Uwaga o danych:
+- `patch-cat-status.sh` robi jedyną potrzebną migrację danych automatycznie (`reserved` → `available`),
+- `seed.sh` **nie jest dobrym narzędziem do aktualizacji działającej, wypełnionej instancji**, bo część kolekcji może dostać duplikaty lub błędy unikalności,
+- jeśli chcesz dodać przykładowe wpisy `forever_home_photos`, lepiej zrobić to ręcznie w panelu admina albo na pustej / testowej bazie.
+
+---
+
 ### Krok 6 - Uprawnienia publiczne w Directus
 
 W panelu admina Directus:
@@ -322,6 +357,7 @@ bash directus/seed.sh
 | `bash directus/patch-cat-status.sh` | Usuwa `reserved` i ustawia stare koty na `available` |
 | `bash directus/patch-page-style.sh` | Upraszcza `page_style` do kolorów + `base_font_size` |
 | `bash directus/patch-forever-home-photos.sh` | Dodaje kolekcję `forever_home_photos` |
+| `bash directus/patch-site-settings.sh` | Dodaje nowsze pola `site_settings` (np. obrazek strony 404) |
 | `powershell -File directus/patch-cat-status.ps1` | To samo (Windows) |
 
 ---

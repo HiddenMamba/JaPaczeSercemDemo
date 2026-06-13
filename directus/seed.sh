@@ -152,13 +152,11 @@ post_if_empty social_links '{"platform":"instagram","url":"https://instagram.com
 # ── Menu Items ────────────────────────────────────────────────────────────────
 echo ""
 echo "=== Menu Items ==="
-post_if_empty menu_items '{"label":"Strona g\u0142\u00f3wna","url":"/","order":1,"open_in_new_tab":false}'
-post_if_empty menu_items '{"label":"Adoptuj kota","url":"/koty","order":2,"open_in_new_tab":false}'
-post_if_empty menu_items '{"label":"Aktualno\u015bci","url":"/aktualnosci","order":3,"open_in_new_tab":false}'
-post_if_empty menu_items '{"label":"O nas","url":"/o-nas","order":4,"open_in_new_tab":false}'
-post_if_empty menu_items '{"label":"Kontakt","url":"/kontakt","order":5,"open_in_new_tab":false}'
-post_if_empty menu_items '{"label":"Partnerzy","url":"/partnerzy","order":6,"open_in_new_tab":false}'
-post_if_empty menu_items '{"label":"Wesprzyj nas","url":"/wesprzyj-nas","order":7,"open_in_new_tab":false}'
+post_if_empty menu_items '{"label":"Aktualno\u015bci","url":"/aktualnosci","order":1,"open_in_new_tab":false}'
+post_if_empty menu_items '{"label":"O nas","url":"/o-nas","order":2,"open_in_new_tab":false}'
+post_if_empty menu_items '{"label":"Kontakt","url":"/kontakt","order":3,"open_in_new_tab":false}'
+post_if_empty menu_items '{"label":"Partnerzy","url":"/partnerzy","order":4,"open_in_new_tab":false}'
+post_if_empty menu_items '{"label":"Wesprzyj nas","url":"/wesprzyj-nas","order":5,"open_in_new_tab":false}'
 
 # ── Pages ─────────────────────────────────────────────────────────────────────
 echo ""

@@ -36,33 +36,36 @@ export function ForeverHomeStrip({ photos }: Props) {
     [photos]
   );
 
-  const repeatCount = photos.length >= 6 ? 2 : photos.length >= 4 ? 3 : 1;
-  const shouldAnimate = photos.length > 0 && repeatCount > 1;
-  const stripPhotos = shouldAnimate
-    ? Array.from({ length: repeatCount }, () => photos).flat()
-    : photos;
+  const shouldAnimate = photos.length > 1;
   const cardStep = 256;
+
+  useEffect(() => {
+    if (!scrollerRef.current) return;
+    scrollerRef.current.scrollLeft = 0;
+  }, [photos]);
 
   useEffect(() => {
     if (!shouldAnimate || isPaused) return;
     const scroller = scrollerRef.current;
     if (!scroller) return;
 
-    const resetAt = scroller.scrollWidth / repeatCount;
+    const maxScrollLeft = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+    if (maxScrollLeft === 0) return;
+
     let frameId = 0;
 
     const tick = () => {
       if (!scrollerRef.current) return;
-      scrollerRef.current.scrollLeft += 0.35;
-      if (scrollerRef.current.scrollLeft >= resetAt) {
-        scrollerRef.current.scrollLeft -= resetAt;
+      const nextScrollLeft = Math.min(scrollerRef.current.scrollLeft + 0.35, maxScrollLeft);
+      scrollerRef.current.scrollLeft = nextScrollLeft;
+      if (nextScrollLeft < maxScrollLeft) {
+        frameId = window.requestAnimationFrame(tick);
       }
-      frameId = window.requestAnimationFrame(tick);
     };
 
     frameId = window.requestAnimationFrame(tick);
     return () => window.cancelAnimationFrame(frameId);
-  }, [isPaused, repeatCount, shouldAnimate]);
+  }, [isPaused, photos.length, shouldAnimate]);
 
   const renderPhotoCard = (item: ForeverHomePhoto, index: number, key: string, wrapperClassName: string) => {
     const publishedAt = formatPublishedAt(item.published_at);
@@ -139,9 +142,9 @@ export function ForeverHomeStrip({ photos }: Props) {
             onBlur={() => setIsPaused(false)}
           >
             <div className="flex gap-4 px-4">
-              {stripPhotos.map((item, index) => renderPhotoCard(
+              {photos.map((item, index) => renderPhotoCard(
                 item,
-                photos.length > 0 ? index % photos.length : index,
+                index,
                 `${item.id}-${index}`,
                 "w-60 shrink-0"
               ))}
