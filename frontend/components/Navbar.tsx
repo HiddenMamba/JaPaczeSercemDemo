@@ -87,19 +87,31 @@ export function Navbar({ menuItems, siteName, logoUrl }: Props) {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-gray-100 px-4 py-3 space-y-1" style={{ backgroundColor: "var(--ps-nav-bg, #ffffff)" }}>
-          {navItems.map((item) => (
+        <div className="md:hidden border-t border-gray-100 px-4 py-3" style={{ backgroundColor: "var(--ps-nav-bg, #ffffff)" }}>
+          <div className="space-y-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.id}
+                href={item.url}
+                className="block px-4 py-2 rounded-lg text-sm font-medium text-gray-700 transition hover:text-white"
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--ps-primary)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = ""; }}
+                onClick={() => setMobileOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-4 border-t border-gray-100 pt-4">
             <Link
-              key={item.id}
-              href={item.url}
-              className="block px-4 py-2 rounded-lg text-sm font-medium text-gray-700 transition hover:text-white"
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--ps-primary)"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = ""; }}
+              href="/koty"
+              className="btn-primary flex w-full justify-center py-3 text-sm"
               onClick={() => setMobileOpen(false)}
             >
-              {item.label}
+              Adoptuj kota
             </Link>
-          ))}
+          </div>
         </div>
       )}
     </header>
